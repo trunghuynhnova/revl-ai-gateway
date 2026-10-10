@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found — Revl AI</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Cpath d='M9 23V9h7.5a4.5 4.5 0 0 1 1.6 8.7L23 23h-3.6l-4.3-5H12v5H9zm3-7.8h4.4a1.8 1.8 0 1 0 0-3.6H12v3.6z' fill='white'/%3E%3C/svg%3E">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: { brand: { 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } },
+          boxShadow: { glow: '0 0 0 1px rgba(99,102,241,.25), 0 20px 60px -20px rgba(99,102,241,.45)' },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Readable even if the Tailwind script fails to load. */
+    body { background: #09090b; color: #e4e4e7; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    a { color: #a5b4fc; }
+  </style>
+</head>
+<body class="flex min-h-screen flex-col bg-zinc-950 text-zinc-200 antialiased selection:bg-brand-500/30 selection:text-white">
+
+  <!-- This page is served for any unknown path, at any depth, so every link is root-relative. -->
+  <header class="border-b border-zinc-800 bg-zinc-950/70">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Primary">
+      <a href="/" class="flex items-center gap-2.5 no-underline" aria-label="Revl AI home">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white shadow-glow">R</span>
+        <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+      </a>
+      <a href="/#waitlist" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white no-underline shadow-sm transition hover:bg-brand-500">Get API Keys</a>
+    </nav>
+  </header>
+
+  <main class="relative flex flex-1 items-center overflow-hidden">
+    <div class="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-600/20 blur-3xl" aria-hidden="true"></div>
+    <div class="relative mx-auto w-full max-w-2xl px-4 py-24 text-center sm:px-6">
+      <p class="font-mono text-sm font-medium text-brand-400">HTTP 404</p>
+      <h1 class="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">This route has no upstream</h1>
+      <p class="mt-5 text-lg leading-relaxed text-zinc-400">The page you asked for does not exist or has moved. The gateway is fine, the address is not.</p>
+
+      <div class="mx-auto mt-8 max-w-md rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 text-left font-mono text-[12.5px] leading-6 text-zinc-400">
+        <div><span class="text-zinc-600">$</span> curl -I <span id="requested-path" class="break-all text-brand-300">https://proxyrevlvay.com/…</span></div>
+        <div class="text-amber-300">HTTP/2 404</div>
+        <div>x-revl-cache: <span class="text-zinc-300">MISS</span></div>
+      </div>
+
+      <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="/" class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-6 py-3 text-base font-semibold text-white no-underline shadow-glow transition hover:bg-brand-500">Back to home</a>
+        <a href="/#docs" class="inline-flex items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900/60 px-6 py-3 text-base font-semibold text-zinc-200 no-underline transition hover:border-zinc-600 hover:bg-zinc-800">Documentation</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-zinc-900">
+    <div class="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-8 text-sm text-zinc-500 sm:flex-row sm:items-center sm:px-6 lg:px-8">
+      <p>Copyright &copy; 2026 Revl AI. All rights reserved.</p>
+      <ul class="flex flex-wrap gap-6">
+        <li><a href="/privacy" class="text-zinc-500 no-underline transition hover:text-white">Privacy Policy</a></li>
+        <li><a href="/terms" class="text-zinc-500 no-underline transition hover:text-white">Terms of Service</a></li>
+        <li><a href="/docs" class="text-zinc-500 no-underline transition hover:text-white">Docs</a></li>
+        <li><a href="/demo" class="text-zinc-500 no-underline transition hover:text-white">Demo</a></li>
+        <li>Founder: <a href="https://www.linkedin.com/in/luat-nguyen-2bb064443/" target="_blank" rel="noopener noreferrer" class="text-zinc-500 no-underline transition hover:text-white">Luat Nguyen</a></li>
+        <li><a href="mailto:founder@proxyrevlvay.com" class="text-zinc-500 no-underline transition hover:text-white">founder@proxyrevlvay.com</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var el = document.getElementById('requested-path');
+      if (!el) return;
+      var path = location.pathname;
+      if (path.length > 60) path = path.slice(0, 57) + '…';
+      el.textContent = location.origin + path;
+    })();
+  </script>
+</body>
+</html>

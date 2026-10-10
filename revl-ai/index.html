@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revl AI — Enterprise AI Gateway &amp; Reverse Proxy</title>
+  <meta name="description" content="Revl AI is an open-source, bring-your-own-key AI gateway and reverse proxy. Response caching, rate limiting, retries and PII masking in front of Claude and OpenAI, using your own provider API keys.">
+  <meta property="og:title" content="Revl AI — Enterprise AI Gateway &amp; Reverse Proxy">
+  <meta property="og:description" content="Optimize token usage with response caching, enforce rate limits, and sanitize private data before routing to Claude and OpenAI with your own API keys.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://proxyrevlvay.com/">
+  <link rel="canonical" href="https://proxyrevlvay.com/">
+  <meta property="og:site_name" content="Revl AI">
+  <meta property="og:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Revl AI: bring-your-own-key AI gateway for Claude and OpenAI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Revl AI — Enterprise AI Gateway &amp; Reverse Proxy">
+  <meta name="twitter:description" content="Revl AI is an open-source, bring-your-own-key AI gateway and reverse proxy. Response caching, rate limiting, retries and PII masking in front of Claude and OpenAI, using your own provider API keys.">
+  <meta name="twitter:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Cpath d='M9 23V9h7.5a4.5 4.5 0 0 1 1.6 8.7L23 23h-3.6l-4.3-5H12v5H9zm3-7.8h4.4a1.8 1.8 0 1 0 0-3.6H12v3.6z' fill='white'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8',
+              500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81',
+            },
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(99,102,241,.25), 0 20px 60px -20px rgba(99,102,241,.45)',
+          },
+          keyframes: {
+            pulseDot: { '0%,100%': { opacity: '1' }, '50%': { opacity: '.35' } },
+          },
+          animation: {
+            pulseDot: 'pulseDot 1.6s ease-in-out infinite',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    .bg-grid {
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
+    }
+    .card-border { position: relative; }
+    .card-border::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(99,102,241,.5), rgba(255,255,255,.06) 40%, rgba(236,72,153,.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    @keyframes flow { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    @keyframes flowY { 0% { transform: translateY(-100%); } 100% { transform: translateY(300%); } }
+    .flow-line { position: relative; overflow: hidden; }
+    .flow-line::after {
+      content: ''; position: absolute; inset: 0; width: 33%;
+      background: linear-gradient(90deg, transparent, rgba(129,140,248,.9), transparent);
+      animation: flow 2.4s linear infinite;
+    }
+    @media (min-width: 1024px) {
+      .flow-line::after {
+        width: 100%; height: 33%;
+        background: linear-gradient(180deg, transparent, rgba(129,140,248,.9), transparent);
+        animation: flowY 2.4s linear infinite;
+      }
+    }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://proxyrevlvay.com/#org","name":"Revl AI","url":"https://proxyrevlvay.com/","logo":"https://proxyrevlvay.com/icon-512.png","email":"founder@proxyrevlvay.com","description":"Open-source, bring-your-own-key AI gateway and reverse proxy for the Anthropic and OpenAI APIs.","founder":{"@type":"Person","@id":"https://proxyrevlvay.com/about#founder","name":"Luat Nguyen","jobTitle":"Founder","sameAs":["https://www.linkedin.com/in/luat-nguyen-2bb064443/"]},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"founder@proxyrevlvay.com"}},{"@type":"WebSite","@id":"https://proxyrevlvay.com/#website","url":"https://proxyrevlvay.com/","name":"Revl AI","inLanguage":"en","publisher":{"@id":"https://proxyrevlvay.com/#org"}},{"@type":"SoftwareApplication","@id":"https://proxyrevlvay.com/#gateway","name":"Revl Gateway","applicationCategory":"DeveloperApplication","operatingSystem":"Cloudflare Workers","softwareVersion":"0.1.0","license":"https://opensource.org/license/mit","description":"Bring-your-own-key gateway for the Anthropic Messages API and the OpenAI Chat Completions API with exact-match caching, PII and secret masking, retries and per-tenant rate limiting.","url":"https://proxyrevlvay.com/docs","isAccessibleForFree":true,"publisher":{"@id":"https://proxyrevlvay.com/#org"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"Open-source core, self-hosted"}}]}</script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-200 antialiased selection:bg-brand-500/30 selection:text-white">
+
+  <!-- Header -->
+  <header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-zinc-950/70 backdrop-blur-md transition-colors duration-300">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Primary">
+      <a href="index.html" class="flex items-center gap-2.5" aria-label="Revl AI home">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white shadow-glow">R</span>
+        <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+      </a>
+
+      <ul class="hidden items-center gap-7 text-sm font-medium text-zinc-400 lg:flex">
+        <li><a href="#features" class="transition hover:text-white">Features</a></li>
+        <li><a href="#architecture" class="transition hover:text-white">Architecture</a></li>
+        <li><a href="#pricing" class="transition hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+        <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+        <li><a href="about.html" class="transition hover:text-white">About</a></li>
+      </ul>
+
+      <div class="hidden items-center gap-3 lg:flex">
+        <!--GITHUB_HEADER-->
+        <button type="button" data-open-modal class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">
+          Get API Keys
+        </button>
+      </div>
+
+      <button type="button" id="nav-toggle" class="inline-flex items-center justify-center rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white lg:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <svg id="icon-menu" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        <svg id="icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+    </nav>
+
+    <div id="mobile-menu" class="hidden border-t border-zinc-800 bg-zinc-950/95 px-4 pb-6 pt-4 lg:hidden">
+      <ul class="flex flex-col gap-1 text-base font-medium text-zinc-300">
+        <li><a href="#features" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Features</a></li>
+        <li><a href="#architecture" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Architecture</a></li>
+        <li><a href="#pricing" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Docs</a></li>
+        <li><a href="demo.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Demo</a></li>
+        <li><a href="about.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">About</a></li>
+      </ul>
+      <button type="button" data-open-modal class="mt-4 w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-500">Get API Keys</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
+      <div class="bg-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-600/20 blur-3xl" aria-hidden="true"></div>
+
+      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid items-center gap-16 lg:grid-cols-12">
+          <div class="lg:col-span-6">
+            <div class="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-xs font-medium text-zinc-300">
+              <span class="h-1.5 w-1.5 rounded-full bg-brand-400"></span>
+              Early access · Bring your own provider keys
+            </div>
+            <h1 class="mt-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              The High-Performance <span class="bg-gradient-to-r from-brand-300 via-brand-400 to-pink-400 bg-clip-text text-transparent">AI Gateway</span> &amp; Reverse Proxy for Enterprise LLMs
+            </h1>
+            <p class="mt-6 max-w-xl text-lg leading-relaxed text-zinc-400">
+              Optimize token usage with response caching, enforce rate limits, and sanitize private data before routing to Claude and OpenAI with your own API keys.
+            </p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href="#waitlist" class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-6 py-3 text-base font-semibold text-white shadow-glow transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">
+                Start Free
+                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+              </a>
+              <a href="docs.html" class="inline-flex items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900/60 px-6 py-3 text-base font-semibold text-zinc-200 transition hover:border-zinc-600 hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500">
+                <svg class="mr-2 h-4 w-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
+                Documentation
+              </a>
+            </div>
+            <dl class="mt-10 grid grid-cols-3 gap-6 border-t border-zinc-800 pt-8">
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Provider keys stored</dt>
+                <dd class="mt-1 text-2xl font-bold text-white">Zero</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Wire formats</dt>
+                <dd class="mt-1 text-2xl font-bold text-white">Native</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Open-source core</dt>
+                <dd class="mt-1 text-2xl font-bold text-white">MIT</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Hero mockup -->
+          <div class="lg:col-span-6">
+            <div class="card-border relative rounded-2xl bg-zinc-900/70 p-1 shadow-2xl shadow-black/50 backdrop-blur">
+              <div class="rounded-[14px] bg-zinc-950">
+                <div class="flex items-center gap-2 border-b border-zinc-800 px-4 py-3">
+                  <span class="h-3 w-3 rounded-full bg-zinc-700"></span>
+                  <span class="h-3 w-3 rounded-full bg-zinc-700"></span>
+                  <span class="h-3 w-3 rounded-full bg-zinc-700"></span>
+                  <span class="ml-3 font-mono text-xs text-zinc-500">revl — zsh</span>
+                  <span class="ml-auto rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">Illustrative example</span>
+                </div>
+                <div class="grid divide-y divide-zinc-800 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+                  <!-- Request -->
+                  <div class="p-5">
+                    <p class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Request</p>
+                    <pre class="overflow-x-auto font-mono text-[12.5px] leading-6 text-zinc-300"><code><span class="text-zinc-500">$</span> curl <span class="text-brand-300">https://api.proxyrevlvay.com/v1/chat/completions</span> \
+  -H <span class="text-emerald-300">"Authorization: Bearer $OPENAI_API_KEY"</span> \
+  -H <span class="text-emerald-300">"X-Revl-Key: $REVL_API_KEY"</span> \
+  -H <span class="text-emerald-300">"X-Revl-Cache: exact"</span> \
+  -H <span class="text-emerald-300">"X-Revl-Mask: pii"</span> \
+  -H <span class="text-emerald-300">"Content-Type: application/json"</span> \
+  -d <span class="text-amber-200">'{
+    "model": "gpt-4o",
+    "messages": [{
+      "role": "user",
+      "content": "Draft a reply to
+                  jane.doe@example.com"
+    }]
+  }'</span></code></pre>
+                  </div>
+                  <!-- Response / metrics -->
+                  <div class="p-5">
+                    <p class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Gateway response</p>
+                    <div class="space-y-2.5">
+                      <div class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs">
+                        <span class="text-zinc-400">Status</span>
+                        <span class="inline-flex items-center gap-1.5 font-mono text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>200 OK</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs">
+                        <span class="text-zinc-400">Latency</span>
+                        <span class="font-mono text-white">28ms</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs">
+                        <span class="text-zinc-400">Cost</span>
+                        <span class="font-mono text-white">$0.00 <span class="ml-1 rounded bg-brand-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-brand-300">CACHED</span></span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs">
+                        <span class="font-mono text-zinc-400">X-Revl-Cache-Status</span>
+                        <span class="font-mono text-brand-300">HIT</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs">
+                        <span class="font-mono text-zinc-400">X-Revl-Masked</span>
+                        <span class="font-mono text-amber-300">1 · email → &lt;EMAIL_1&gt;</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-xs">
+                        <span class="text-zinc-400">Provider key</span>
+                        <span class="font-mono text-white">forwarded, not stored</span>
+                      </div>
+                    </div>
+                    <p class="mt-4 text-[11px] leading-relaxed text-zinc-500">A repeated request answered from cache. <a href="demo.html" class="text-brand-300 underline decoration-brand-300/40 underline-offset-2 hover:text-brand-200">See the simulated dashboard</a>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compatibility strip -->
+    <section class="border-y border-zinc-900 bg-zinc-950 py-10">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-xs font-medium uppercase tracking-widest text-zinc-500">Works with the official SDKs · Change the base URL, keep your code</p>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 font-mono text-sm text-zinc-500">
+          <span>anthropic (Python, Node.js)</span><span aria-hidden="true">·</span><span>openai (Python, Node.js)</span><span aria-hidden="true">·</span><span>curl</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="scroll-mt-24 py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Key features</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Everything between your app and the model</h2>
+          <p class="mt-4 text-lg text-zinc-400">One endpoint in front of the providers you already use. Each card says what the open-source core does today and what is still on the roadmap.</p>
+        </div>
+
+        <div class="mt-16 grid gap-6 md:grid-cols-3">
+          <article class="group relative flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8 transition hover:border-brand-500/40 hover:bg-zinc-900/70">
+            <div class="grid h-12 w-12 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>
+            </div>
+            <h3 class="mt-6 text-xl font-semibold text-white">Smart Context Caching</h3>
+            <p class="mt-3 leading-relaxed text-zinc-400">Cut LLM API costs by up to 60% on repetitive workloads by reusing responses to requests you have already paid for. Every cache hit is an upstream call you do not make.</p>
+            <ul class="mt-6 flex-1 space-y-2 text-sm text-zinc-400">
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Per-request TTL from one minute to 24 hours</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Isolated per tenant and per provider key</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Cache status on every response header</li>
+            </ul>
+            <p class="mt-6 border-t border-zinc-800 pt-4 text-xs text-zinc-500"><span class="font-semibold text-emerald-300">Available:</span> exact-match caching. <span class="font-semibold text-zinc-300">Roadmap:</span> semantic matching.</p>
+          </article>
+
+          <article class="group relative flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8 transition hover:border-brand-500/40 hover:bg-zinc-900/70">
+            <div class="grid h-12 w-12 place-items-center rounded-xl bg-emerald-500/10 text-emerald-300 ring-1 ring-inset ring-emerald-500/20">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+            </div>
+            <h3 class="mt-6 text-xl font-semibold text-white">Resilient Routing &amp; Fallback</h3>
+            <p class="mt-3 leading-relaxed text-zinc-400">Automatic retries with backoff when a provider rate-limits you or returns a server error, plus per-tenant rate limits so one client cannot starve the rest.</p>
+            <ul class="mt-6 flex-1 space-y-2 text-sm text-zinc-400">
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Up to three retries on 429 and 5xx responses</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Per-tenant rate limits</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Streaming responses passed straight through</li>
+            </ul>
+            <p class="mt-6 border-t border-zinc-800 pt-4 text-xs text-zinc-500"><span class="font-semibold text-emerald-300">Available:</span> retries, rate limits. <span class="font-semibold text-zinc-300">Roadmap:</span> fallback across providers.</p>
+          </article>
+
+          <article class="group relative flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8 transition hover:border-brand-500/40 hover:bg-zinc-900/70">
+            <div class="grid h-12 w-12 place-items-center rounded-xl bg-pink-500/10 text-pink-300 ring-1 ring-inset ring-pink-500/20">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+            </div>
+            <h3 class="mt-6 text-xl font-semibold text-white">Zero-Knowledge Data Masking</h3>
+            <p class="mt-3 leading-relaxed text-zinc-400">Mask PII and enterprise secrets in real time before sending upstream. Matches are replaced with placeholders at the gateway and restored in the response, so the provider never sees the raw values.</p>
+            <ul class="mt-6 flex-1 space-y-2 text-sm text-zinc-400">
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-pink-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Emails, phone numbers, cards, IPs, API keys and tokens</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-pink-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Mapping kept in memory for one request only</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-pink-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Pattern based: a safeguard, not a compliance guarantee</li>
+            </ul>
+            <p class="mt-6 border-t border-zinc-800 pt-4 text-xs text-zinc-500"><span class="font-semibold text-emerald-300">Available:</span> non-streaming requests. <span class="font-semibold text-zinc-300">Roadmap:</span> streaming, custom detectors.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BYOK -->
+    <section id="byok" class="scroll-mt-24 border-t border-zinc-900 py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-12">
+          <div class="lg:col-span-5">
+            <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Bring your own key</p>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Your provider account. Your key. We never resell model access.</h2>
+            <p class="mt-4 text-lg text-zinc-400">Revl AI is middleware. Every request is authenticated to Anthropic or OpenAI with your own API key, under your own account, billing and that provider's terms. Revl charges only for the gateway, never for tokens.</p>
+            <a href="docs.html#byok" class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-300 hover:text-brand-200">How BYOK works <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg></a>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-3 lg:col-span-7">
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+              <h3 class="font-semibold text-white">Two separate keys</h3>
+              <p class="mt-2 text-sm leading-relaxed text-zinc-400">Your provider key goes in the provider's usual header. A Revl key in <code class="font-mono text-[12px] text-zinc-300">X-Revl-Key</code> only identifies you to the gateway.</p>
+            </div>
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+              <h3 class="font-semibold text-white">Never stored or logged</h3>
+              <p class="mt-2 text-sm leading-relaxed text-zinc-400">A provider key is forwarded for the one request it arrives with. It is not written to storage, logs or cache. Request and response bodies are not logged.</p>
+            </div>
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+              <h3 class="font-semibold text-white">API keys only</h3>
+              <p class="mt-2 text-sm leading-relaxed text-zinc-400">OAuth and consumer subscription tokens are rejected. No pooling, no sharing, no resale of provider access through the gateway.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture" class="scroll-mt-24 border-y border-zinc-900 bg-zinc-900/30 py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Architecture</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">A single reverse proxy in front of every model</h2>
+          <p class="mt-4 text-lg text-zinc-400">Point your SDK at the gateway's base URL. Each request passes the steps below, then goes to the provider you chose, in that provider's native format, with your own key.</p>
+        </div>
+
+        <div class="mt-16 grid items-stretch gap-6 lg:grid-cols-[1fr_auto_1.4fr_auto_1fr]">
+          <!-- Client -->
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 place-items-center rounded-lg bg-zinc-800 text-zinc-300">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"/></svg>
+              </span>
+              <div>
+                <h3 class="font-semibold text-white">Your Client</h3>
+                <p class="text-xs text-zinc-500">Any app using an official SDK</p>
+              </div>
+            </div>
+            <pre class="mt-5 overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/70 p-3 font-mono text-[11.5px] leading-5 text-zinc-300"><code>client = Anthropic(
+  base_url=<span class="text-brand-300">"https://api.proxyrevlvay.com"</span>,
+  api_key=ANTHROPIC_API_KEY,  <span class="text-zinc-500"># yours</span>
+  default_headers={
+    <span class="text-emerald-300">"X-Revl-Key"</span>: REVL_API_KEY,
+  },
+)</code></pre>
+          </div>
+
+          <!-- Connector -->
+          <div class="flex items-center justify-center" aria-hidden="true">
+            <div class="flow-line h-16 w-0.5 rounded-full bg-zinc-800 lg:h-0.5 lg:w-16"></div>
+          </div>
+
+          <!-- Gateway -->
+          <div class="card-border rounded-2xl bg-zinc-950 p-6 shadow-glow">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 font-extrabold text-white">R</span>
+                <div>
+                  <h3 class="font-semibold text-white">Revl Gateway</h3>
+                  <p class="text-xs text-zinc-500">Runs on Cloudflare Workers</p>
+                </div>
+              </div>
+              <span class="inline-flex items-center rounded-full bg-brand-500/10 px-2.5 py-1 text-[11px] font-medium text-brand-300">Holds no provider keys</span>
+            </div>
+            <ol class="mt-6 space-y-2.5">
+              <li class="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 text-sm">
+                <span class="grid h-6 w-6 flex-none place-items-center rounded-md bg-zinc-800 font-mono text-[11px] text-zinc-400">1</span>
+                <span class="text-zinc-200">Gateway key &amp; rate limit</span>
+                <span class="ml-auto font-mono text-[11px] text-zinc-500">per tenant</span>
+              </li>
+              <li class="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 text-sm">
+                <span class="grid h-6 w-6 flex-none place-items-center rounded-md bg-zinc-800 font-mono text-[11px] text-zinc-400">2</span>
+                <span class="text-zinc-200">PII &amp; secret masking</span>
+                <span class="ml-auto font-mono text-[11px] text-pink-400">opt-in</span>
+              </li>
+              <li class="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 text-sm">
+                <span class="grid h-6 w-6 flex-none place-items-center rounded-md bg-zinc-800 font-mono text-[11px] text-zinc-400">3</span>
+                <span class="text-zinc-200">Exact-match cache lookup</span>
+                <span class="ml-auto font-mono text-[11px] text-brand-300">hit: no upstream call</span>
+              </li>
+              <li class="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 text-sm">
+                <span class="grid h-6 w-6 flex-none place-items-center rounded-md bg-zinc-800 font-mono text-[11px] text-zinc-400">4</span>
+                <span class="text-zinc-200">Forward with your key</span>
+                <span class="ml-auto font-mono text-[11px] text-emerald-400">retries · backoff</span>
+              </li>
+              <li class="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 text-sm">
+                <span class="grid h-6 w-6 flex-none place-items-center rounded-md bg-zinc-800 font-mono text-[11px] text-zinc-400">5</span>
+                <span class="text-zinc-200">Metadata-only log line</span>
+                <span class="ml-auto font-mono text-[11px] text-zinc-500">no bodies, no keys</span>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Connector -->
+          <div class="flex items-center justify-center" aria-hidden="true">
+            <div class="flow-line h-16 w-0.5 rounded-full bg-zinc-800 lg:h-0.5 lg:w-16"></div>
+          </div>
+
+          <!-- Providers -->
+          <div class="flex flex-col gap-4">
+            <div class="flex-1 rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-lg bg-[#d4a27f]/15 font-bold text-[#d4a27f]">A</span>
+                <div>
+                  <h3 class="font-semibold text-white">Anthropic</h3>
+                  <p class="text-xs text-zinc-500">Claude models, Messages API</p>
+                </div>
+              </div>
+              <p class="mt-4 font-mono text-[11px] text-zinc-400">/v1/messages</p>
+              <p class="mt-1 text-xs text-zinc-500">Authenticated with your Anthropic API key</p>
+            </div>
+            <div class="flex-1 rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-lg bg-emerald-500/10 font-bold text-emerald-300">O</span>
+                <div>
+                  <h3 class="font-semibold text-white">OpenAI</h3>
+                  <p class="text-xs text-zinc-500">Chat Completions API</p>
+                </div>
+              </div>
+              <p class="mt-4 font-mono text-[11px] text-zinc-400">/v1/chat/completions</p>
+              <p class="mt-1 text-xs text-zinc-500">Authenticated with your OpenAI API key</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="scroll-mt-24 py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Pricing</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Simple, usage-based plans</h2>
+          <p class="mt-4 text-lg text-zinc-400">Planned pricing for the hosted gateway, which is invite-only today. Self-hosting the open-source core is free. Model usage is always billed by your provider on your own account.</p>
+        </div>
+
+        <div class="mt-16 grid gap-6 lg:grid-cols-3">
+          <!-- Free -->
+          <div class="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8">
+            <h3 class="text-lg font-semibold text-white">Free</h3>
+            <p class="mt-1 text-sm text-zinc-500">For side projects and evaluation.</p>
+            <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-extrabold tracking-tight text-white">$0</span><span class="text-sm text-zinc-500">/mo</span></p>
+            <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-300">
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>100k requests / month</li>
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Caching, masking and retries</li>
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Community support</li>
+            </ul>
+            <a href="#waitlist" class="mt-8 block rounded-lg border border-zinc-700 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:border-zinc-500 hover:bg-zinc-800">Start Free</a>
+          </div>
+
+          <!-- Pro -->
+          <div class="card-border relative flex flex-col rounded-2xl bg-zinc-900/70 p-8 shadow-glow">
+            <h3 class="text-lg font-semibold text-white">Pro</h3>
+            <p class="mt-1 text-sm text-zinc-500">For teams running AI features in production.</p>
+            <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-extrabold tracking-tight text-white">$29</span><span class="text-sm text-zinc-500">/mo</span></p>
+            <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-300">
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>2M requests / month</li>
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Advanced caching</li>
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Custom domains</li>
+            </ul>
+            <button type="button" data-open-modal class="mt-8 block w-full rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-500">Get API Keys</button>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8">
+            <h3 class="text-lg font-semibold text-white">Enterprise</h3>
+            <p class="mt-1 text-sm text-zinc-500">For regulated industries and high volume.</p>
+            <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-extrabold tracking-tight text-white">Custom</span></p>
+            <ul class="mt-8 flex-1 space-y-3 text-sm text-zinc-300">
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Dedicated cluster</li>
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>SLA</li>
+              <li class="flex gap-3"><svg class="h-5 w-5 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Custom VPC</li>
+            </ul>
+            <a href="mailto:founder@proxyrevlvay.com?subject=Revl%20AI%20Enterprise" class="mt-8 block rounded-lg border border-zinc-700 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:border-zinc-500 hover:bg-zinc-800">Contact Sales</a>
+          </div>
+        </div>
+        <p class="mx-auto mt-8 max-w-2xl text-center text-sm text-zinc-500">No fees are charged today. Plans cover the gateway service only and never include or resell model usage.</p>
+      </div>
+    </section>
+
+    <!-- Docs teaser -->
+    <section id="docs" class="scroll-mt-24 border-y border-zinc-900 bg-zinc-900/30 py-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid items-center gap-12 lg:grid-cols-2">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Docs</p>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Change one line: the base URL</h2>
+            <p class="mt-4 text-lg text-zinc-400">The gateway speaks the Anthropic Messages API and the OpenAI Chat Completions API unchanged. Keep the official SDK, keep your own key, add one header.</p>
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <a href="docs.html#quickstart" class="rounded-xl border border-zinc-800 bg-zinc-950 p-4 transition hover:border-brand-500/40">
+                <p class="font-semibold text-white">Quickstart</p>
+                <p class="mt-1 text-sm text-zinc-500">Python, Node.js and cURL in two minutes.</p>
+              </a>
+              <a href="docs.html#request-options" class="rounded-xl border border-zinc-800 bg-zinc-950 p-4 transition hover:border-brand-500/40">
+                <p class="font-semibold text-white">Request options</p>
+                <p class="mt-1 text-sm text-zinc-500">Caching, masking and retry headers.</p>
+              </a>
+              <a href="docs.html#self-hosting" class="rounded-xl border border-zinc-800 bg-zinc-950 p-4 transition hover:border-brand-500/40">
+                <p class="font-semibold text-white">Self-hosting</p>
+                <p class="mt-1 text-sm text-zinc-500">Run the open-source core on your own account.</p>
+              </a>
+              <a href="demo.html" class="rounded-xl border border-zinc-800 bg-zinc-950 p-4 transition hover:border-brand-500/40">
+                <p class="font-semibold text-white">Demo dashboard</p>
+                <p class="mt-1 text-sm text-zinc-500">A simulation of what the gateway reports.</p>
+              </a>
+            </div>
+          </div>
+          <div class="card-border rounded-2xl bg-zinc-950 p-1">
+            <div class="rounded-[14px] bg-zinc-950">
+              <div class="flex items-center gap-4 border-b border-zinc-800 px-4 text-xs font-medium" role="tablist" aria-label="Code sample language">
+                <button type="button" role="tab" aria-selected="true" class="docs-tab border-b-2 border-brand-500 py-3 text-white" data-tab="python">Python · Anthropic</button>
+                <button type="button" role="tab" aria-selected="false" class="docs-tab border-b-2 border-transparent py-3 text-zinc-500 hover:text-zinc-300" data-tab="node">Node.js · OpenAI</button>
+                <button type="button" role="tab" aria-selected="false" class="docs-tab border-b-2 border-transparent py-3 text-zinc-500 hover:text-zinc-300" data-tab="curl">cURL</button>
+              </div>
+              <pre class="docs-panel overflow-x-auto p-5 font-mono text-[12.5px] leading-6 text-zinc-300" data-panel="python"><code><span class="text-pink-300">import</span> os
+<span class="text-pink-300">from</span> anthropic <span class="text-pink-300">import</span> Anthropic
+
+client = Anthropic(
+    base_url=<span class="text-brand-300">"https://api.proxyrevlvay.com"</span>,
+    api_key=os.environ[<span class="text-emerald-300">"ANTHROPIC_API_KEY"</span>],  <span class="text-zinc-500"># your own key</span>
+    default_headers={<span class="text-emerald-300">"X-Revl-Key"</span>: os.environ[<span class="text-emerald-300">"REVL_API_KEY"</span>]},
+)
+
+message = client.messages.create(
+    model=<span class="text-emerald-300">"claude-opus-5-5"</span>,
+    max_tokens=16000,
+    messages=[{<span class="text-emerald-300">"role"</span>: <span class="text-emerald-300">"user"</span>, <span class="text-emerald-300">"content"</span>: <span class="text-emerald-300">"Hello"</span>}],
+)
+<span class="text-pink-300">for</span> block <span class="text-pink-300">in</span> message.content:
+    <span class="text-pink-300">if</span> block.type == <span class="text-emerald-300">"text"</span>:
+        <span class="text-pink-300">print</span>(block.text)</code></pre>
+              <pre class="docs-panel hidden overflow-x-auto p-5 font-mono text-[12.5px] leading-6 text-zinc-300" data-panel="node"><code><span class="text-pink-300">import</span> OpenAI <span class="text-pink-300">from</span> <span class="text-emerald-300">"openai"</span>;
+
+<span class="text-pink-300">const</span> client = <span class="text-pink-300">new</span> OpenAI({
+  baseURL: <span class="text-brand-300">"https://api.proxyrevlvay.com/v1"</span>,
+  apiKey: process.env.OPENAI_API_KEY, <span class="text-zinc-500">// your own key</span>
+  defaultHeaders: { <span class="text-emerald-300">"X-Revl-Key"</span>: process.env.REVL_API_KEY },
+});
+
+<span class="text-pink-300">const</span> completion = <span class="text-pink-300">await</span> client.chat.completions.create({
+  model: <span class="text-emerald-300">"gpt-4o"</span>,
+  messages: [{ role: <span class="text-emerald-300">"user"</span>, content: <span class="text-emerald-300">"Hello"</span> }],
+});
+console.log(completion.choices[0].message.content);</code></pre>
+              <pre class="docs-panel hidden overflow-x-auto p-5 font-mono text-[12.5px] leading-6 text-zinc-300" data-panel="curl"><code>curl <span class="text-brand-300">https://api.proxyrevlvay.com/v1/messages</span> \
+  -H <span class="text-emerald-300">"x-api-key: $ANTHROPIC_API_KEY"</span> \
+  -H <span class="text-emerald-300">"anthropic-version: 2023-06-01"</span> \
+  -H <span class="text-emerald-300">"X-Revl-Key: $REVL_API_KEY"</span> \
+  -H <span class="text-emerald-300">"X-Revl-Cache: exact"</span> \
+  -H <span class="text-emerald-300">"Content-Type: application/json"</span> \
+  -d <span class="text-amber-200">'{"model":"claude-opus-5-5","max_tokens":16000,
+       "messages":[{"role":"user","content":"Hello"}]}'</span></code></pre>
+            </div>
+            <p class="px-5 pb-4 pt-1 text-[11px] text-zinc-500">The hosted endpoint is invite-only. Self-hosting? Use your own Worker URL as the base URL.</p>
+          </div>
+        </div>
+        <div class="mt-10 text-center">
+          <a href="docs.html" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-300 hover:text-brand-200">Read the documentation <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Waitlist -->
+    <section id="waitlist" class="scroll-mt-24 py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/50 px-6 py-16 text-center sm:px-16">
+          <div class="pointer-events-none absolute -top-40 left-1/2 h-80 w-[700px] -translate-x-1/2 rounded-full bg-brand-600/25 blur-3xl" aria-hidden="true"></div>
+          <div class="relative mx-auto max-w-2xl">
+            <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Join the waitlist</h2>
+            <p class="mt-4 text-lg text-zinc-400">Get early access to the hosted gateway and a direct line to the founder. No credit card required.</p>
+            <form id="waitlist-form" class="mt-8 flex flex-col gap-3 sm:flex-row" novalidate>
+              <label for="waitlist-email" class="sr-only">Work email</label>
+              <input type="text" name="company_site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+              <input id="waitlist-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com"
+                     class="w-full flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-base text-white placeholder-zinc-500 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40">
+              <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 disabled:opacity-60">
+                Start Free
+              </button>
+            </form>
+            <p id="waitlist-msg" class="mt-3 min-h-[1.25rem] text-sm text-zinc-500" role="status" aria-live="polite">By signing up you agree to our <a href="terms.html" class="underline decoration-zinc-600 underline-offset-2 hover:text-zinc-300">Terms</a> and <a href="privacy.html" class="underline decoration-zinc-600 underline-offset-2 hover:text-zinc-300">Privacy Policy</a>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-900 bg-zinc-950">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="grid gap-10 md:grid-cols-12">
+        <div class="md:col-span-5">
+          <a href="index.html" class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white">R</span>
+            <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+          </a>
+          <p class="mt-4 max-w-sm text-sm leading-relaxed text-zinc-500">Open-source, bring-your-own-key AI gateway. Cache repeated requests, mask private data and keep your own provider accounts.</p>
+          <p class="mt-4 text-sm text-zinc-500">Founder: <a href="https://www.linkedin.com/in/luat-nguyen-2bb064443/" target="_blank" rel="noopener noreferrer" class="text-zinc-300 transition hover:text-white">Luat Nguyen</a></p>
+          <p class="mt-1 text-sm text-zinc-500">Support: <a href="mailto:founder@proxyrevlvay.com" class="text-zinc-300 transition hover:text-white">founder@proxyrevlvay.com</a></p>
+        </div>
+        <div class="md:col-span-2">
+          <h4 class="text-sm font-semibold text-white">Product</h4>
+          <ul class="mt-4 space-y-2.5 text-sm text-zinc-500">
+            <li><a href="#features" class="transition hover:text-white">Features</a></li>
+            <li><a href="#architecture" class="transition hover:text-white">Architecture</a></li>
+            <li><a href="#pricing" class="transition hover:text-white">Pricing</a></li>
+            <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+            <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+            <!--GITHUB_FOOTER-->
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <h4 class="text-sm font-semibold text-white">Project</h4>
+          <ul class="mt-4 space-y-2.5 text-sm text-zinc-500">
+            <li><a href="about.html" class="transition hover:text-white">About</a></li>
+            <li><a href="mailto:founder@proxyrevlvay.com" class="transition hover:text-white">Contact</a></li>
+            <li><a href="#waitlist" class="transition hover:text-white">Waitlist</a></li>
+            <li><a href="mailto:founder@proxyrevlvay.com?subject=Security" class="transition hover:text-white">Security</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-3">
+          <h4 class="text-sm font-semibold text-white">Legal</h4>
+          <ul class="mt-4 space-y-2.5 text-sm text-zinc-500">
+            <li><a href="privacy.html" class="transition hover:text-white">Privacy Policy</a></li>
+            <li><a href="terms.html" class="transition hover:text-white">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-12 border-t border-zinc-900 pt-8 text-sm text-zinc-500">
+        <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <p>Copyright &copy; 2026 Revl AI. All rights reserved.</p>
+          <p class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-brand-400"></span>Early access</p>
+        </div>
+        <p class="mt-4 max-w-3xl text-xs leading-relaxed text-zinc-600">Revl AI is an independent project. It is not affiliated with, endorsed by or sponsored by Anthropic or OpenAI. Claude is a trademark of Anthropic, PBC. OpenAI and GPT are trademarks of OpenAI. You use each model provider under your own account and that provider's terms.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- API Keys modal -->
+  <div id="modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="modal-backdrop" class="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm"></div>
+    <div class="card-border relative w-full max-w-md rounded-2xl bg-zinc-900 p-8 shadow-2xl">
+      <button type="button" id="modal-close" class="absolute right-4 top-4 rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-800 hover:text-white" aria-label="Close">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+      <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/></svg>
+      </span>
+      <h2 id="modal-title" class="mt-5 text-2xl font-bold text-white">Get your API keys</h2>
+      <p class="mt-2 text-sm text-zinc-400">Enter your work email to request a sandbox key with 100k free requests. We'll email you access details and onboarding docs.</p>
+      <form id="modal-form" class="mt-6 space-y-3" novalidate>
+        <label for="modal-email" class="sr-only">Work email</label>
+        <input type="text" name="company_site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <input id="modal-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com"
+               class="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-base text-white placeholder-zinc-500 transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40">
+        <button type="submit" class="w-full rounded-lg bg-brand-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-brand-500 disabled:opacity-60">Request a key</button>
+      </form>
+      <p id="modal-msg" class="mt-3 min-h-[1.25rem] text-sm text-zinc-500" role="status" aria-live="polite">We'll never share your email. See our <a href="privacy.html" class="underline decoration-zinc-600 underline-offset-2 hover:text-zinc-300">Privacy Policy</a>.</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // Header border on scroll
+      var header = document.getElementById('site-header');
+      var onScroll = function () {
+        header.classList.toggle('border-zinc-800', window.scrollY > 8);
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Mobile nav
+      var toggle = document.getElementById('nav-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconMenu = document.getElementById('icon-menu');
+      var iconClose = document.getElementById('icon-close');
+      var setMenu = function (open) {
+        menu.classList.toggle('hidden', !open);
+        iconMenu.classList.toggle('hidden', open);
+        iconClose.classList.toggle('hidden', !open);
+        toggle.setAttribute('aria-expanded', String(open));
+      };
+      toggle.addEventListener('click', function () { setMenu(menu.classList.contains('hidden')); });
+      menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+
+      // Modal
+      var modal = document.getElementById('modal');
+      var lastFocus = null;
+      var openModal = function () {
+        lastFocus = document.activeElement;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        setMenu(false);
+        setTimeout(function () { document.getElementById('modal-email').focus(); }, 30);
+      };
+      var closeModal = function () {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      };
+      document.querySelectorAll('[data-open-modal]').forEach(function (b) { b.addEventListener('click', openModal); });
+      document.getElementById('modal-close').addEventListener('click', closeModal);
+      document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+      });
+
+      // Docs tabs
+      var tabs = document.querySelectorAll('.docs-tab');
+      var panels = document.querySelectorAll('.docs-panel');
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var key = tab.getAttribute('data-tab');
+          tabs.forEach(function (t) {
+            var active = t === tab;
+            t.classList.toggle('border-brand-500', active);
+            t.classList.toggle('text-white', active);
+            t.classList.toggle('border-transparent', !active);
+            t.classList.toggle('text-zinc-500', !active);
+            t.setAttribute('aria-selected', String(active));
+          });
+          panels.forEach(function (p) { p.classList.toggle('hidden', p.getAttribute('data-panel') !== key); });
+        });
+      });
+
+      // Email forms
+      var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      var wire = function (formId, inputId, msgId, source, successText) {
+        var form = document.getElementById(formId);
+        var input = document.getElementById(inputId);
+        var msg = document.getElementById(msgId);
+        var defaultHTML = msg.innerHTML;
+        var defaultClass = msg.className;
+
+        input.addEventListener('input', function () {
+          if (msg.dataset.state === 'error') {
+            input.classList.remove('border-red-500', 'focus:ring-red-500/40');
+            msg.innerHTML = defaultHTML;
+            msg.className = defaultClass;
+            delete msg.dataset.state;
+          }
+        });
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var value = input.value.trim();
+          if (!EMAIL_RE.test(value)) {
+            input.classList.add('border-red-500', 'focus:ring-red-500/40');
+            msg.textContent = 'Please enter a valid work email address.';
+            msg.className = defaultClass + ' text-red-400';
+            msg.dataset.state = 'error';
+            input.focus();
+            return;
+          }
+          var btn = form.querySelector('button[type="submit"]');
+          var btnLabel = btn.textContent;
+          var trap = form.querySelector('input[name="company_site"]');
+          btn.disabled = true;
+          btn.textContent = 'Submitting…';
+
+          var fail = function (text) {
+            btn.disabled = false;
+            btn.textContent = btnLabel;
+            msg.textContent = text;
+            msg.className = defaultClass + ' text-red-400';
+            msg.dataset.state = 'error';
+          };
+
+          // Handled by the Worker in src/worker.js, which stores the address in D1.
+          fetch('/api/waitlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: value, source: source, hp: trap ? trap.value : '' })
+          }).then(function (res) {
+            if (res.ok) {
+              form.classList.add('hidden');
+              delete msg.dataset.state;
+              msg.className = 'mt-4 inline-flex items-center gap-2 text-sm font-medium text-emerald-300';
+              msg.innerHTML = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg><span></span>';
+              msg.querySelector('span').textContent = successText;
+            } else if (res.status === 400) {
+              input.classList.add('border-red-500', 'focus:ring-red-500/40');
+              fail('Please enter a valid work email address.');
+            } else if (res.status === 429) {
+              fail('Too many attempts. Please wait a minute and try again.');
+            } else {
+              fail('Something went wrong. Please try again, or email founder@proxyrevlvay.com.');
+            }
+          }).catch(function () {
+            fail('Could not reach the server. Check your connection and try again.');
+          });
+        });
+      };
+      wire('waitlist-form', 'waitlist-email', 'waitlist-msg', 'waitlist', "You're on the list. We'll be in touch shortly.");
+      wire('modal-form', 'modal-email', 'modal-msg', 'api-keys', "Request received. We'll email you when your sandbox key is ready.");
+    })();
+  </script>
+</body>
+</html>
