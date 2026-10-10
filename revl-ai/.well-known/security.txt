@@ -1,0 +1,5 @@
+# Security contact for proxyrevlvay.com and the Revl Gateway
+Contact: mailto:founder@proxyrevlvay.com
+Expires: 2027-10-11T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://proxyrevlvay.com/.well-known/security.txt

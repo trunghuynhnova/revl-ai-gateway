@@ -1,0 +1,6 @@
+# https://proxyrevlvay.com
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://proxyrevlvay.com/sitemap.xml
