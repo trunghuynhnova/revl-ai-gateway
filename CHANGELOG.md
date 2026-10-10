@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to this project are recorded here. Dates are UTC.
+All notable changes to this project are recorded here. Dates are local time, UTC+7.
 
 ## Gateway 0.1.0 (2026-10-11)
 
