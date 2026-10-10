@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — Revl AI</title>
+  <meta name="description" content="Quickstart and reference for Revl Gateway, an open-source BYOK gateway for the Anthropic and OpenAI APIs: caching, masking, retries and rate limits.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://proxyrevlvay.com/docs">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Documentation — Revl AI">
+  <meta property="og:description" content="Quickstart and reference for Revl Gateway, an open-source BYOK gateway for the Anthropic and OpenAI APIs: caching, masking, retries and rate limits.">
+  <meta property="og:url" content="https://proxyrevlvay.com/docs">
+  <meta property="og:site_name" content="Revl AI">
+  <meta property="og:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Revl AI: bring-your-own-key AI gateway for Claude and OpenAI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Documentation — Revl AI">
+  <meta name="twitter:description" content="Quickstart and reference for Revl Gateway, an open-source BYOK gateway for the Anthropic and OpenAI APIs: caching, masking, retries and rate limits.">
+  <meta name="twitter:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Cpath d='M9 23V9h7.5a4.5 4.5 0 0 1 1.6 8.7L23 23h-3.6l-4.3-5H12v5H9zm3-7.8h4.4a1.8 1.8 0 1 0 0-3.6H12v3.6z' fill='white'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8',
+              500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81',
+            },
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(99,102,241,.25), 0 20px 60px -20px rgba(99,102,241,.45)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Readable even if the Tailwind script fails to load. */
+    body { background: #09090b; color: #e4e4e7; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    .card-border { position: relative; }
+    .card-border::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(99,102,241,.5), rgba(255,255,255,.06) 40%, rgba(236,72,153,.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    /* PAGE-SPECIFIC STYLES GO BELOW THIS LINE */
+    /* The current item in the mobile menu keeps the spacing of its siblings. */
+    #mobile-menu a[aria-current="page"] { display: block; border-radius: .5rem; padding: .625rem .75rem; }
+
+    /* Prose */
+    .docs section { scroll-margin-top: 6rem; }
+    .docs section + section { margin-top: 4rem; }
+    .docs h2 { font-size: 1.5rem; line-height: 1.3; font-weight: 700; letter-spacing: -.015em; color: #fff; }
+    .docs h3 { margin-top: 2rem; font-size: 1.0625rem; line-height: 1.4; font-weight: 600; color: #f4f4f5; }
+    .docs section > p, .docs section > ul { margin-top: 1rem; max-width: 46rem; line-height: 1.75; color: #a1a1aa; }
+    .docs section > ul { padding-left: 1.25rem; list-style: disc; }
+    .docs section > ul > li { margin-top: .4rem; }
+    .docs li::marker { color: #818cf8; }
+    .docs strong { color: #e4e4e7; font-weight: 600; }
+    .docs p a, .docs li a, .docs td a { color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(165,180,252,.4); text-underline-offset: 3px; }
+    .docs p a:hover, .docs li a:hover, .docs td a:hover { color: #c7d2fe; }
+    .docs :not(pre) > code {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; font-size: .85em; color: #e4e4e7;
+      background: rgba(39,39,42,.7); border: 1px solid #27272a; border-radius: .375rem; padding: .08em .35em; overflow-wrap: anywhere;
+    }
+    .docs .nw { white-space: nowrap; }
+
+    /* Tables: scroll inside their own box on narrow screens */
+    .docs .tbl { margin-top: 1.25rem; overflow-x: auto; border: 1px solid #27272a; border-radius: .75rem; background: rgba(24,24,27,.4); }
+    .docs table { width: 100%; border-collapse: collapse; font-size: .875rem; line-height: 1.6; }
+    .docs thead th { text-align: left; padding: .7rem .9rem; color: #e4e4e7; font-weight: 600; white-space: nowrap; background: rgba(39,39,42,.5); }
+    .docs tbody th, .docs td { padding: .7rem .9rem; vertical-align: top; text-align: left; font-weight: 400; color: #a1a1aa; border-top: 1px solid #27272a; }
+    .docs tbody th { color: #e4e4e7; }
+
+    /* Code blocks */
+    .docs .code { margin-top: 1rem; border: 1px solid #27272a; border-radius: .75rem; background: #0c0c0f; overflow: hidden; }
+    .docs .code-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .4rem .5rem .4rem .9rem; border-bottom: 1px solid #27272a; background: rgba(24,24,27,.7); font-size: .75rem; color: #a1a1aa; }
+    .docs .code pre { margin: 0; padding: 1rem; overflow-x: auto; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; font-size: .8125rem; line-height: 1.65; color: #d4d4d8; }
+    .docs .copy-btn { flex: none; border: 1px solid #3f3f46; border-radius: .375rem; background: #18181b; padding: .2rem .6rem; font-size: .75rem; font-weight: 500; color: #d4d4d8; cursor: pointer; transition: color .15s, border-color .15s; }
+    .docs .copy-btn:hover { color: #fff; border-color: #71717a; }
+    .docs .copy-btn.done { color: #6ee7b7; border-color: rgba(52,211,153,.5); }
+    .t-k { color: #f9a8d4; }                     /* keyword */
+    .t-s { color: #6ee7b7; }                     /* string */
+    .t-u { color: #a5b4fc; }                     /* gateway URL */
+    .t-n { color: #fcd34d; }                     /* number */
+    .t-f { color: #7dd3fc; }                     /* function */
+    .t-c { color: #85858f; font-style: italic; } /* comment */
+
+    /* Tabs */
+    .docs .tabs { margin-top: 1rem; border: 1px solid #27272a; border-radius: 1rem; background: rgba(24,24,27,.4); }
+    .docs .tablist { display: flex; gap: .25rem; overflow-x: auto; padding: 0 .5rem; border-bottom: 1px solid #27272a; }
+    .docs .tab { flex: none; white-space: nowrap; margin-bottom: -1px; border-bottom: 2px solid transparent; padding: .7rem .7rem .6rem; font-size: .8125rem; font-weight: 500; color: #a1a1aa; cursor: pointer; transition: color .15s; }
+    .docs .tab:hover { color: #e4e4e7; }
+    .docs .tab[aria-selected="true"] { color: #fff; border-bottom-color: #6366f1; }
+    .docs [role="tabpanel"] { padding: 0 1rem 1rem; }
+    /* Before the tab script has run, show only the first panel. Without scripting, show them all. */
+    @media (scripting: enabled) {
+      [data-tabs]:not([data-ready]) [role="tabpanel"] ~ [role="tabpanel"] { display: none; }
+    }
+
+    /* The two keys in the BYOK diagram */
+    .key-chip { display: inline-flex; align-items: center; white-space: nowrap; border: 1px solid; border-radius: 9999px; padding: .15rem .6rem; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; font-size: .75rem; line-height: 1.4; }
+    .key-provider { color: #6ee7b7; border-color: rgba(52,211,153,.45); background: rgba(16,185,129,.1); }
+    .key-revl { color: #c7d2fe; border-color: rgba(129,140,248,.55); background: rgba(99,102,241,.15); }
+    .key-stopped { color: #a1a1aa; border-color: #52525b; border-style: dashed; }
+
+    /* Table of contents */
+    .toc a { display: block; margin-left: -1px; border-left: 1px solid transparent; padding: .375rem 0 .375rem 1rem; color: #a1a1aa; transition: color .15s, border-color .15s; }
+    .toc a:hover { color: #fff; border-left-color: #71717a; }
+    .toc a.active { color: #fff; border-left-color: #6366f1; }
+
+    /* Visible keyboard focus */
+    .docs a:focus-visible, .docs button:focus-visible, .toc a:focus-visible, .toc-mobile a:focus-visible, .toc-mobile summary:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; border-radius: .25rem; }
+    .docs pre:focus-visible, .docs .tbl:focus-visible { outline: 2px solid #818cf8; outline-offset: -2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto !important; }
+      .docs *, .toc * { transition: none !important; }
+    }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://proxyrevlvay.com/docs","url":"https://proxyrevlvay.com/docs","headline":"Revl Gateway documentation","description":"Quickstart and reference for Revl Gateway, an open-source BYOK gateway for the Anthropic and OpenAI APIs: caching, masking, retries and rate limits.","inLanguage":"en","dateModified":"2026-10-11","author":{"@type":"Organization","name":"Revl AI","url":"https://proxyrevlvay.com/"},"publisher":{"@type":"Organization","name":"Revl AI","url":"https://proxyrevlvay.com/"}}]}</script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-200 antialiased selection:bg-brand-500/30 selection:text-white">
+
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Primary">
+      <a href="index.html" class="flex items-center gap-2.5" aria-label="Revl AI home">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white shadow-glow">R</span>
+        <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+      </a>
+
+      <ul class="hidden items-center gap-7 text-sm font-medium text-zinc-400 lg:flex">
+        <li><a href="index.html#features" class="transition hover:text-white">Features</a></li>
+        <li><a href="index.html#architecture" class="transition hover:text-white">Architecture</a></li>
+        <li><a href="index.html#pricing" class="transition hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="text-white" aria-current="page">Docs</a></li>
+        <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+        <li><a href="about.html" class="transition hover:text-white">About</a></li>
+      </ul>
+
+      <div class="hidden items-center gap-3 lg:flex">
+        <!--GITHUB_HEADER-->
+        <a href="index.html#waitlist" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">Get API Keys</a>
+      </div>
+
+      <button type="button" id="nav-toggle" class="inline-flex items-center justify-center rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white lg:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <svg id="icon-menu" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        <svg id="icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+    </nav>
+
+    <div id="mobile-menu" class="hidden border-t border-zinc-800 bg-zinc-950/95 px-4 pb-6 pt-4 lg:hidden">
+      <ul class="flex flex-col gap-1 text-base font-medium text-zinc-300">
+        <li><a href="index.html#features" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Features</a></li>
+        <li><a href="index.html#architecture" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Architecture</a></li>
+        <li><a href="index.html#pricing" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="text-white" aria-current="page">Docs</a></li>
+        <li><a href="demo.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Demo</a></li>
+        <li><a href="about.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">About</a></li>
+      </ul>
+      <a href="index.html#waitlist" class="mt-4 block w-full rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-500">Get API Keys</a>
+    </div>
+  </header>
+
+  <main class="pt-28 pb-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+      <div class="max-w-3xl">
+        <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Documentation</p>
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Revl Gateway documentation</h1>
+        <p class="mt-4 text-lg leading-relaxed text-zinc-400">Revl Gateway is an open-source, bring-your-own-key gateway that sits between your application and the Anthropic and OpenAI APIs and adds exact-match caching, PII and secret masking, retries and per-tenant rate limits.</p>
+      </div>
+
+      <div class="docs mt-8 max-w-3xl rounded-2xl border border-brand-500/30 bg-brand-500/10 p-5" role="note" aria-label="Status">
+        <p class="text-sm leading-relaxed text-zinc-300"><strong>Status.</strong> The hosted gateway at <code>https://api.proxyrevlvay.com</code> is invite-only and is being rolled out to the <a href="index.html#waitlist">waitlist</a>. It is not generally available. You can <a href="#self-hosting">self-host the open-source core</a> on your own Cloudflare account today. This page documents core v0.1.</p>
+      </div>
+
+      <details class="toc-mobile mt-8 rounded-xl border border-zinc-800 bg-zinc-900/40 lg:hidden">
+        <summary class="cursor-pointer px-4 py-3 text-sm font-semibold text-white">On this page</summary>
+        <nav class="border-t border-zinc-800 px-4 py-3 text-sm" aria-label="On this page">
+          <ul class="grid gap-2 text-zinc-300 sm:grid-cols-2">
+            <li><a href="#byok" class="hover:text-white">How BYOK works</a></li>
+            <li><a href="#quickstart" class="hover:text-white">Quickstart</a></li>
+            <li><a href="#endpoints" class="hover:text-white">Endpoints</a></li>
+            <li><a href="#request-options" class="hover:text-white">Request options</a></li>
+            <li><a href="#response-headers" class="hover:text-white">Response headers</a></li>
+            <li><a href="#caching" class="hover:text-white">Caching</a></li>
+            <li><a href="#masking" class="hover:text-white">Masking</a></li>
+            <li><a href="#streaming" class="hover:text-white">Streaming</a></li>
+            <li><a href="#rate-limits" class="hover:text-white">Rate limits</a></li>
+            <li><a href="#errors" class="hover:text-white">Errors</a></li>
+            <li><a href="#self-hosting" class="hover:text-white">Self-hosting</a></li>
+            <li><a href="#data-handling" class="hover:text-white">Data handling</a></li>
+            <li><a href="#status" class="hover:text-white">Available now and roadmap</a></li>
+          </ul>
+        </nav>
+      </details>
+
+      <div class="mt-10 grid grid-cols-1 gap-10 lg:mt-14 lg:grid-cols-[200px_minmax(0,1fr)]">
+
+        <aside class="hidden lg:block">
+          <nav class="toc sticky top-28 border-l border-zinc-800 text-sm" aria-label="Table of contents">
+            <a href="#byok">How BYOK works</a>
+            <a href="#quickstart">Quickstart</a>
+            <a href="#endpoints">Endpoints</a>
+            <a href="#request-options">Request options</a>
+            <a href="#response-headers">Response headers</a>
+            <a href="#caching">Caching</a>
+            <a href="#masking">Masking</a>
+            <a href="#streaming">Streaming</a>
+            <a href="#rate-limits">Rate limits</a>
+            <a href="#errors">Errors</a>
+            <a href="#self-hosting">Self-hosting</a>
+            <a href="#data-handling">Data handling</a>
+            <a href="#status">Available now and roadmap</a>
+          </nav>
+        </aside>
+
+        <article class="docs min-w-0 max-w-4xl">
+
+          <section id="byok" aria-labelledby="byok-h">
+            <h2 id="byok-h">How BYOK works</h2>
+            <p>BYOK means bring your own key. The gateway holds no model-provider credentials. Every request carries two keys, and they do different jobs.</p>
+
+            <figure class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 sm:p-6">
+              <div class="flex flex-col gap-3 md:flex-row md:items-stretch">
+                <div class="rounded-xl border border-zinc-700 bg-zinc-950 p-4 md:flex-1 md:p-3">
+                  <p class="text-sm font-semibold text-white">Your app</p>
+                  <p class="mt-1 text-xs leading-relaxed text-zinc-400">Sends both keys as request headers.</p>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-2 md:w-28 md:flex-none md:flex-col md:flex-nowrap">
+                  <span class="key-chip key-provider">provider key</span>
+                  <span class="key-chip key-revl">Revl key</span>
+                  <svg class="h-5 w-5 flex-none rotate-90 text-zinc-400 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
+                </div>
+                <div class="rounded-xl border border-brand-500/50 bg-brand-500/10 p-4 md:flex-1 md:p-3">
+                  <p class="text-sm font-semibold text-white">Revl Gateway</p>
+                  <p class="mt-1 text-xs leading-relaxed text-zinc-300">Checks the Revl key, then drops it. Never stores or logs the provider key.</p>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-2 md:w-28 md:flex-none md:flex-col md:flex-nowrap">
+                  <span class="key-chip key-provider">provider key</span>
+                  <span class="key-chip key-stopped">no Revl key</span>
+                  <svg class="h-5 w-5 flex-none rotate-90 text-zinc-400 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
+                </div>
+                <div class="rounded-xl border border-zinc-700 bg-zinc-950 p-4 md:flex-1 md:p-3">
+                  <p class="text-sm font-semibold text-white">Provider</p>
+                  <p class="mt-1 text-xs leading-relaxed text-zinc-400">Anthropic or OpenAI, under your account, your billing and their terms.</p>
+                </div>
+              </div>
+              <figcaption class="mt-4 text-xs leading-relaxed text-zinc-400">Two keys travel with every request. Only your provider key reaches the provider, and only for that request.</figcaption>
+            </figure>
+
+            <ul>
+              <li><strong>Your provider API key</strong> travels in that provider's standard header: <code>x-api-key</code> for Anthropic, <code>Authorization: Bearer</code> for OpenAI. The gateway forwards it upstream for that one request. It is never written to storage, never logged, and never used for any other caller.</li>
+              <li><strong>Your Revl key</strong> (<code>rvl_live_</code> followed by 32 to 128 URL-safe characters) travels in <code>X-Revl-Key</code>. It only identifies you to the gateway, which stores only the key's SHA-256 digest. It is never forwarded upstream.</li>
+            </ul>
+            <p>Revl AI does not resell, sublicense, pool or share model-provider API access. Every request is authenticated to Anthropic or OpenAI with your own API key, under your own provider account and billing and that provider's terms and usage policies. Revl charges only for the gateway, never for model usage.</p>
+            <p><strong>API keys only.</strong> OAuth and consumer subscription tokens are rejected; only provider API keys are accepted. On the Anthropic route, a request that carries an <code>Authorization</code> header and no <code>x-api-key</code> is rejected with <code>400 revl_oauth_not_supported</code>.</p>
+          </section>
+
+          <section id="quickstart" aria-labelledby="quickstart-h">
+            <h2 id="quickstart-h">Quickstart</h2>
+            <p>Keep the SDK you already use. Change the base URL, pass your own provider key as usual, and add one header.</p>
+
+            <h3>1. Set your keys</h3>
+            <p>You need a Revl key and your own provider API key. The hosted gateway is invite-only, so a hosted Revl key comes with an invitation from the <a href="index.html#waitlist">waitlist</a>. If you self-host, you <a href="#self-hosting">create one yourself</a>. Export the keys so they never appear in code:</p>
+            <div class="code">
+              <div class="code-head"><span>Shell</span><button type="button" class="copy-btn" data-copy aria-label="Copy shell commands">Copy</button></div>
+              <pre tabindex="0"><code data-sample="env.sh"><span class="t-k">export</span> REVL_API_KEY=<span class="t-s">"rvl_live_your_gateway_key"</span>
+<span class="t-k">export</span> ANTHROPIC_API_KEY=<span class="t-s">"your-anthropic-api-key"</span>   <span class="t-c"># if you call Anthropic</span>
+<span class="t-k">export</span> OPENAI_API_KEY=<span class="t-s">"your-openai-api-key"</span>         <span class="t-c"># if you call OpenAI</span></code></pre>
+            </div>
+
+            <h3>2. Send a request</h3>
+            <div class="tabs" data-tabs>
+              <div class="tablist" role="tablist" aria-label="Quickstart examples">
+                <button type="button" class="tab" role="tab" id="tab-py-anthropic" aria-controls="panel-py-anthropic" aria-selected="true">Python (Anthropic SDK)</button>
+                <button type="button" class="tab" role="tab" id="tab-py-openai" aria-controls="panel-py-openai" aria-selected="false" tabindex="-1">Python (OpenAI SDK)</button>
+                <button type="button" class="tab" role="tab" id="tab-node-anthropic" aria-controls="panel-node-anthropic" aria-selected="false" tabindex="-1">Node.js (Anthropic SDK)</button>
+                <button type="button" class="tab" role="tab" id="tab-node-openai" aria-controls="panel-node-openai" aria-selected="false" tabindex="-1">Node.js (OpenAI SDK)</button>
+                <button type="button" class="tab" role="tab" id="tab-curl" aria-controls="panel-curl" aria-selected="false" tabindex="-1">cURL</button>
+              </div>
+
+              <div role="tabpanel" id="panel-py-anthropic" aria-labelledby="tab-py-anthropic">
+                <div class="code">
+                  <div class="code-head"><span>Install</span><button type="button" class="copy-btn" data-copy aria-label="Copy install command for the Anthropic Python SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="install-py-anthropic.sh">pip install anthropic</code></pre>
+                </div>
+                <div class="code">
+                  <div class="code-head"><span>quickstart.py</span><button type="button" class="copy-btn" data-copy aria-label="Copy Python example for the Anthropic SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="py-anthropic.py"><span class="t-k">import</span> os
+<span class="t-k">from</span> anthropic <span class="t-k">import</span> Anthropic
+
+client = Anthropic(
+    base_url=<span class="t-u">"https://api.proxyrevlvay.com"</span>,
+    api_key=os.environ[<span class="t-s">"ANTHROPIC_API_KEY"</span>],  <span class="t-c"># your own Anthropic API key</span>
+    default_headers={<span class="t-s">"X-Revl-Key"</span>: os.environ[<span class="t-s">"REVL_API_KEY"</span>]},
+)
+
+message = client.messages.create(
+    model=<span class="t-s">"claude-opus-5-5"</span>,
+    max_tokens=<span class="t-n">16000</span>,
+    messages=[{<span class="t-s">"role"</span>: <span class="t-s">"user"</span>, <span class="t-s">"content"</span>: <span class="t-s">"Say hello in one sentence."</span>}],
+)
+
+<span class="t-k">for</span> block <span class="t-k">in</span> message.content:
+    <span class="t-k">if</span> block.type == <span class="t-s">"text"</span>:
+        <span class="t-f">print</span>(block.text)</code></pre>
+                </div>
+              </div>
+
+              <div role="tabpanel" id="panel-py-openai" aria-labelledby="tab-py-openai">
+                <div class="code">
+                  <div class="code-head"><span>Install</span><button type="button" class="copy-btn" data-copy aria-label="Copy install command for the OpenAI Python SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="install-py-openai.sh">pip install openai</code></pre>
+                </div>
+                <div class="code">
+                  <div class="code-head"><span>quickstart.py</span><button type="button" class="copy-btn" data-copy aria-label="Copy Python example for the OpenAI SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="py-openai.py"><span class="t-k">import</span> os
+<span class="t-k">from</span> openai <span class="t-k">import</span> OpenAI
+
+client = OpenAI(
+    base_url=<span class="t-u">"https://api.proxyrevlvay.com/v1"</span>,
+    api_key=os.environ[<span class="t-s">"OPENAI_API_KEY"</span>],  <span class="t-c"># your own OpenAI API key</span>
+    default_headers={<span class="t-s">"X-Revl-Key"</span>: os.environ[<span class="t-s">"REVL_API_KEY"</span>]},
+)
+
+completion = client.chat.completions.create(
+    model=<span class="t-s">"gpt-4o"</span>,
+    messages=[{<span class="t-s">"role"</span>: <span class="t-s">"user"</span>, <span class="t-s">"content"</span>: <span class="t-s">"Say hello in one sentence."</span>}],
+)
+
+<span class="t-f">print</span>(completion.choices[<span class="t-n">0</span>].message.content)</code></pre>
+                </div>
+              </div>
+
+              <div role="tabpanel" id="panel-node-anthropic" aria-labelledby="tab-node-anthropic">
+                <div class="code">
+                  <div class="code-head"><span>Install</span><button type="button" class="copy-btn" data-copy aria-label="Copy install command for the Anthropic Node.js SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="install-node-anthropic.sh">npm install @anthropic-ai/sdk</code></pre>
+                </div>
+                <div class="code">
+                  <div class="code-head"><span>quickstart.mjs</span><button type="button" class="copy-btn" data-copy aria-label="Copy Node.js example for the Anthropic SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="node-anthropic.mjs"><span class="t-k">import</span> Anthropic <span class="t-k">from</span> <span class="t-s">"@anthropic-ai/sdk"</span>;
+
+<span class="t-k">const</span> client = <span class="t-k">new</span> Anthropic({
+  baseURL: <span class="t-u">"https://api.proxyrevlvay.com"</span>,
+  apiKey: process.env.ANTHROPIC_API_KEY, <span class="t-c">// your own Anthropic API key</span>
+  defaultHeaders: { <span class="t-s">"X-Revl-Key"</span>: process.env.REVL_API_KEY },
+});
+
+<span class="t-k">const</span> message = <span class="t-k">await</span> client.messages.create({
+  model: <span class="t-s">"claude-opus-5-5"</span>,
+  max_tokens: <span class="t-n">16000</span>,
+  messages: [{ role: <span class="t-s">"user"</span>, content: <span class="t-s">"Say hello in one sentence."</span> }],
+});
+
+<span class="t-k">for</span> (<span class="t-k">const</span> block <span class="t-k">of</span> message.content) {
+  <span class="t-k">if</span> (block.type === <span class="t-s">"text"</span>) {
+    console.<span class="t-f">log</span>(block.text);
+  }
+}</code></pre>
+                </div>
+              </div>
+
+              <div role="tabpanel" id="panel-node-openai" aria-labelledby="tab-node-openai">
+                <div class="code">
+                  <div class="code-head"><span>Install</span><button type="button" class="copy-btn" data-copy aria-label="Copy install command for the OpenAI Node.js SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="install-node-openai.sh">npm install openai</code></pre>
+                </div>
+                <div class="code">
+                  <div class="code-head"><span>quickstart.mjs</span><button type="button" class="copy-btn" data-copy aria-label="Copy Node.js example for the OpenAI SDK">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="node-openai.mjs"><span class="t-k">import</span> OpenAI <span class="t-k">from</span> <span class="t-s">"openai"</span>;
+
+<span class="t-k">const</span> client = <span class="t-k">new</span> OpenAI({
+  baseURL: <span class="t-u">"https://api.proxyrevlvay.com/v1"</span>,
+  apiKey: process.env.OPENAI_API_KEY, <span class="t-c">// your own OpenAI API key</span>
+  defaultHeaders: { <span class="t-s">"X-Revl-Key"</span>: process.env.REVL_API_KEY },
+});
+
+<span class="t-k">const</span> completion = <span class="t-k">await</span> client.chat.completions.create({
+  model: <span class="t-s">"gpt-4o"</span>,
+  messages: [{ role: <span class="t-s">"user"</span>, content: <span class="t-s">"Say hello in one sentence."</span> }],
+});
+
+console.<span class="t-f">log</span>(completion.choices[<span class="t-n">0</span>].message.content);</code></pre>
+                </div>
+              </div>
+
+              <div role="tabpanel" id="panel-curl" aria-labelledby="tab-curl">
+                <div class="code">
+                  <div class="code-head"><span>Shell</span><button type="button" class="copy-btn" data-copy aria-label="Copy cURL examples">Copy</button></div>
+                  <pre tabindex="0"><code data-sample="curl.sh"><span class="t-c"># Anthropic Messages API</span>
+curl <span class="t-u">https://api.proxyrevlvay.com/v1/messages</span> \
+  -H <span class="t-s">"X-Revl-Key: $REVL_API_KEY"</span> \
+  -H <span class="t-s">"x-api-key: $ANTHROPIC_API_KEY"</span> \
+  -H <span class="t-s">"anthropic-version: 2023-06-01"</span> \
+  -H <span class="t-s">"content-type: application/json"</span> \
+  -d <span class="t-s">'{
+    "model": "claude-opus-5-5",
+    "max_tokens": 16000,
+    "messages": [{"role": "user", "content": "Say hello in one sentence."}]
+  }'</span>
+
+<span class="t-c"># OpenAI Chat Completions API</span>
+curl <span class="t-u">https://api.proxyrevlvay.com/v1/chat/completions</span> \
+  -H <span class="t-s">"X-Revl-Key: $REVL_API_KEY"</span> \
+  -H <span class="t-s">"Authorization: Bearer $OPENAI_API_KEY"</span> \
+  -H <span class="t-s">"content-type: application/json"</span> \
+  -d <span class="t-s">'{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Say hello in one sentence."}]
+  }'</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <ul>
+              <li><strong>Self-hosting?</strong> Replace <code>https://api.proxyrevlvay.com</code> with your own Worker URL.</li>
+              <li>The Node.js samples are ES modules that use top-level <code>await</code>. Save them with the <code>.mjs</code> extension.</li>
+              <li>To see what the gateway did, read the <a href="#response-headers"><code>X-Revl-*</code> response headers</a>. With cURL, add <code>-i</code>.</li>
+            </ul>
+          </section>
+
+          <section id="endpoints" aria-labelledby="endpoints-h">
+            <h2 id="endpoints-h">Endpoints</h2>
+            <div class="tbl" role="region" aria-label="Endpoints" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Method and path</th><th scope="col">Upstream</th><th scope="col">Provider key header (required)</th><th scope="col">SDK base URL</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row"><code class="nw">POST /v1/chat/completions</code></th><td><code>https://api.openai.com/v1/chat/completions</code></td><td><code>Authorization: Bearer &lt;OpenAI API key&gt;</code></td><td>OpenAI SDK: <code class="nw">&lt;gateway&gt;/v1</code></td></tr>
+                  <tr><th scope="row"><code class="nw">POST /v1/messages</code></th><td><code>https://api.anthropic.com/v1/messages</code></td><td><code>x-api-key: &lt;Anthropic API key&gt;</code></td><td>Anthropic SDK: <code class="nw">&lt;gateway&gt;</code> (the SDK appends <code class="nw">/v1/messages</code>)</td></tr>
+                  <tr><th scope="row"><code class="nw">GET /healthz</code></th><td>none</td><td>none</td><td>Returns <code>{"ok":true,"version":"0.1.0"}</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>There is no translation layer. OpenAI-format requests go to OpenAI and Anthropic-format requests go to Anthropic. The body is forwarded unchanged unless you turn on masking. On the Anthropic route, the <code>anthropic-version</code> and <code>anthropic-beta</code> request headers are forwarded unchanged.</p>
+            <p>Request headers reach the provider by allow-list only: <code>content-type</code>, <code>accept</code>, <code>user-agent</code>, <code>x-stainless-*</code>, your provider key header, and <code>openai-organization</code> and <code>openai-project</code> on the OpenAI route. Cookies, every <code>X-Revl-*</code> header and any other client header are dropped, and the query string is not forwarded. A JWT-shaped bearer token on the OpenAI route, or an <code>x-api-key</code> that starts with <code>sk-ant-oat</code>, is rejected with <code>400 revl_oauth_not_supported</code>.</p>
+          </section>
+
+          <section id="request-options" aria-labelledby="request-options-h">
+            <h2 id="request-options-h">Request options</h2>
+            <p>Every option is an optional request header. <code>X-Revl-Key</code> and every other <code>X-Revl-*</code> request header are consumed by the gateway and are never forwarded upstream.</p>
+            <div class="tbl" role="region" aria-label="Request options" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Header</th><th scope="col">Values</th><th scope="col">Default</th><th scope="col">Effect</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row"><code class="nw">X-Revl-Cache</code></th><td><code>exact</code>, <code>off</code></td><td><code>off</code></td><td>Exact-match response cache for this request</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Cache-TTL</code></th><td>seconds</td><td><code>3600</code></td><td>Clamped to 60..86400</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Mask</code></th><td>comma list of <code>pii</code>, <code>secrets</code>; or <code>off</code></td><td><code>off</code></td><td>Mask matches before the request leaves the gateway</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Retries</code></th><td><code>0</code>..<code>3</code></td><td><code>0</code></td><td>Retry upstream on 429, 500, 502, 503, 504 and network errors</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>An invalid value returns <code>400 revl_bad_request</code> naming the header.</p>
+
+            <h3>Example: caching and masking on every request</h3>
+            <div class="code">
+              <div class="code-head"><span>Python</span><button type="button" class="copy-btn" data-copy aria-label="Copy Python example with caching and masking">Copy</button></div>
+              <pre tabindex="0"><code data-sample="options.py"><span class="t-k">import</span> os
+<span class="t-k">from</span> anthropic <span class="t-k">import</span> Anthropic
+
+client = Anthropic(
+    base_url=<span class="t-u">"https://api.proxyrevlvay.com"</span>,
+    api_key=os.environ[<span class="t-s">"ANTHROPIC_API_KEY"</span>],
+    default_headers={
+        <span class="t-s">"X-Revl-Key"</span>: os.environ[<span class="t-s">"REVL_API_KEY"</span>],
+        <span class="t-s">"X-Revl-Cache"</span>: <span class="t-s">"exact"</span>,        <span class="t-c"># cache identical requests</span>
+        <span class="t-s">"X-Revl-Cache-TTL"</span>: <span class="t-s">"600"</span>,      <span class="t-c"># keep entries for 10 minutes</span>
+        <span class="t-s">"X-Revl-Mask"</span>: <span class="t-s">"pii,secrets"</span>,   <span class="t-c"># mask before the request leaves the gateway</span>
+    },
+)</code></pre>
+            </div>
+            <p>To set an option for a single call instead, send the header with that request: <code>extra_headers</code> in the Python SDKs, the <code>headers</code> request option in the JavaScript SDKs.</p>
+          </section>
+
+          <section id="response-headers" aria-labelledby="response-headers-h">
+            <h2 id="response-headers-h">Response headers</h2>
+            <p>Added to every proxied response.</p>
+            <div class="tbl" role="region" aria-label="Response headers" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Header</th><th scope="col">Value</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row"><code class="nw">X-Revl-Request-Id</code></th><td>uuid</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Cache-Status</code></th><td><code>HIT</code>, <code>MISS</code>, or <code>BYPASS</code> when the cache was not used for the request (caching is off, or the request is streamed)</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Upstream-Ms</code></th><td>integer, <code>0</code> on a hit</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Masked</code></th><td>number of distinct values masked</td></tr>
+                  <tr><th scope="row"><code class="nw">X-Revl-Retries</code></th><td>retries actually used</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>The upstream status code and body are returned unchanged, including upstream error responses, so each SDK's own error handling keeps working. <code>set-cookie</code> and hop-by-hop headers are dropped from the upstream response.</p>
+          </section>
+
+          <section id="caching" aria-labelledby="caching-h">
+            <h2 id="caching-h">Caching</h2>
+            <p>Send <code>X-Revl-Cache: exact</code> to cache a response. Matching is exact, not semantic. <code>X-Revl-Cache-TTL</code> sets how long an entry is kept. A hit returns <code>X-Revl-Cache-Status: HIT</code> and <code>X-Revl-Upstream-Ms: 0</code>.</p>
+            <div class="tbl" role="region" aria-label="Cache behaviour" tabindex="0">
+              <table>
+                <tbody>
+                  <tr><th scope="row" class="nw">Cache key</th><td>SHA-256 over the tenant id, the route, the SHA-256 of the provider key, the <code>anthropic-version</code> and <code>anthropic-beta</code> header values, and the canonical JSON of the body that is sent upstream (object keys sorted recursively).</td></tr>
+                  <tr><th scope="row" class="nw">Stored only when</th><td>The request is not streaming, the upstream status is 200, the response body is at most 1 MiB, and the body does not repeat your provider key or gateway key.</td></tr>
+                  <tr><th scope="row" class="nw">What is stored</th><td>The status, content type and body of the response, in the KV binding <code>CACHE</code>.</td></tr>
+                  <tr><th scope="row" class="nw">Isolation</th><td>Entries are scoped to the gateway key (the tenant) and bound to a hash of the provider key, so a cached completion can never be served to a different provider account.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p><strong>With masking on</strong>, the key is computed over the masked body and the stored response is the upstream response before rehydration. On a hit, the response is rehydrated with the current request's mapping. Two prompts that differ only in masked values therefore share one cache entry, which is safe because the provider never saw the values.</p>
+
+            <h3 id="semantic-caching">Semantic caching: planned design</h3>
+            <p><strong>Roadmap. Not available in v0.1.</strong> Exact matching only helps when two requests are identical after canonicalisation. The planned semantic layer reuses a response when a new prompt means the same thing as an earlier one. This is the design we intend to build, published so you can review it before it ships. It may change.</p>
+            <ol class="mt-4 list-decimal space-y-2 pl-5 text-zinc-400">
+              <li><strong>Embed.</strong> The final user turn, after masking, is turned into a vector by an embedding model. The system prompt, model name, tools and sampling parameters are not embedded. They are hashed into a strict context key, so a hit can only come from a request with the same instructions and settings.</li>
+              <li><strong>Search.</strong> The vector is looked up in an index partitioned by tenant, context key and the hash of the provider key. Tenants and provider accounts never share a partition.</li>
+              <li><strong>Decide.</strong> The nearest neighbour is used only above a similarity threshold the caller sets per request. Below it, the request goes upstream and the new response is indexed.</li>
+              <li><strong>Report.</strong> A semantic hit gets its own cache status and the similarity score in the response headers, so every reused answer can be audited.</li>
+            </ol>
+            <p>Known limit: semantic reuse can return the answer to a question that only looks similar. It is unsuitable where a small change in wording matters, such as amounts, names or negation. For that reason it will be opt-in per request, with the exact-match cache checked first.</p>
+          </section>
+
+          <section id="masking" aria-labelledby="masking-h">
+            <h2 id="masking-h">Masking</h2>
+            <p>Send <code>X-Revl-Mask</code> with <code>pii</code>, <code>secrets</code> or <code>pii,secrets</code>. Matches are replaced with placeholders before the request leaves the gateway, and placeholders in the response are replaced with your original values.</p>
+            <div class="mt-5 max-w-3xl rounded-xl border border-amber-400/30 bg-amber-400/10 p-4" role="note" aria-label="Limits of masking">
+              <p class="text-sm leading-relaxed text-amber-100"><strong class="!text-amber-50">Know the limits.</strong> Masking is pattern based. It will miss things and is not a compliance control by itself.</p>
+            </div>
+
+            <h3>Detectors</h3>
+            <div class="tbl" role="region" aria-label="Masking detectors" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Value</th><th scope="col">Detects</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row"><code class="nw">pii</code></th><td>Email address; phone number (8 to 15 digits written with a leading +, a bracketed area code, or at least three digit groups; a bare run of digits is not treated as a phone number); payment card (13 to 19 digits that pass the Luhn check); IPv4 address.</td></tr>
+                  <tr><th scope="row"><code class="nw">secrets</code></th><td><code>sk-ant-...</code>, <code>sk-...</code> and <code>sk-proj-...</code> keys; AWS access key ids (<code>AKIA</code> + 16); GitHub tokens (<code>ghp_</code>, <code>gho_</code>, <code>ghu_</code>, <code>ghs_</code>, <code>ghr_</code>, <code>github_pat_</code>); Slack tokens (<code>xox[baprs]-</code>); JSON Web Tokens; PEM private key blocks.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Where it applies</h3>
+            <div class="tbl" role="region" aria-label="Where masking applies" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Format</th><th scope="col">Masked in the request</th><th scope="col">Rehydrated in the response</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">OpenAI</th><td><code>messages[].content</code> (string, or <code>text</code> parts of an array)</td><td><code>choices[].message.content</code></td></tr>
+                  <tr><th scope="row">Anthropic</th><td><code>system</code> (string or text blocks) and <code>messages[].content</code> (string, text blocks, and string or text-block content of <code>tool_result</code> blocks)</td><td><code>content[]</code> text blocks</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>Masking is not applied to tool definitions, tool call arguments, or image and document data. It cannot be combined with <a href="#streaming">streaming</a> in v0.1.</p>
+
+            <h3>Placeholders and rehydration</h3>
+            <p>Placeholders look like <code>&lt;EMAIL_1&gt;</code>, <code>&lt;PHONE_1&gt;</code>, <code>&lt;CARD_1&gt;</code>, <code>&lt;IP_1&gt;</code> and <code>&lt;SECRET_1&gt;</code>. The same value gets the same placeholder within one request. The mapping exists only in memory for the duration of the request. The <code>X-Revl-Masked</code> response header reports the number of distinct values masked.</p>
+            <div class="tbl" role="region" aria-label="Illustrative masking example" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col" colspan="2">Illustrative example with <code>X-Revl-Mask: pii</code></th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row" class="nw">You send</th><td>Write to jane@example.com and ask whether jane@example.com is still the right address</td></tr>
+                  <tr><th scope="row" class="nw">The provider receives</th><td>Write to &lt;EMAIL_1&gt; and ask whether &lt;EMAIL_1&gt; is still the right address</td></tr>
+                  <tr><th scope="row" class="nw">The provider replies</th><td>Subject: Is &lt;EMAIL_1&gt; still the right address?</td></tr>
+                  <tr><th scope="row" class="nw">You receive</th><td>Subject: Is jane@example.com still the right address?</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="streaming" aria-labelledby="streaming-h">
+            <h2 id="streaming-h">Streaming</h2>
+            <p>Set <code>"stream": true</code> in the body as you normally would.</p>
+            <ul>
+              <li>The upstream response is passed through unbuffered.</li>
+              <li>Streamed responses are not cached. <code>X-Revl-Cache-Status</code> is <code>BYPASS</code>.</li>
+              <li>Masking with streaming is not supported in v0.1: <code>400 revl_mask_stream_unsupported</code>.</li>
+              <li>Retries apply only before the first upstream byte.</li>
+            </ul>
+          </section>
+
+          <section id="rate-limits" aria-labelledby="rate-limits-h">
+            <h2 id="rate-limits-h">Rate limits</h2>
+            <p>The gateway limits requests per tenant through the Workers rate limiting binding <code>RATE_LIMITER</code>. The default is 60 requests per 60 seconds, set in <code>wrangler.jsonc</code>. Over the limit you get <code>429 revl_rate_limited</code> with <code>Retry-After: 60</code>. If the binding is absent, the gateway does not rate limit.</p>
+            <p>This is separate from your provider's own limits. A provider <code>429</code> passes through unchanged, while a gateway <code>429</code> has an error type that starts with <code>revl_</code>.</p>
+          </section>
+
+          <section id="errors" aria-labelledby="errors-h">
+            <h2 id="errors-h">Errors</h2>
+            <p>Every error the gateway itself produces has this shape and carries an <code>X-Revl-Request-Id</code> header. Messages never contain key material.</p>
+            <div class="code">
+              <div class="code-head"><span>JSON</span><button type="button" class="copy-btn" data-copy aria-label="Copy error shape">Copy</button></div>
+              <pre tabindex="0"><code data-sample="error.json">{<span class="t-s">"error"</span>: {<span class="t-s">"type"</span>: <span class="t-s">"revl_&lt;code&gt;"</span>, <span class="t-s">"message"</span>: <span class="t-s">"&lt;human readable&gt;"</span>}}</code></pre>
+            </div>
+            <div class="tbl" role="region" aria-label="Gateway errors" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Status</th><th scope="col">Type</th><th scope="col">When</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>400</td><th scope="row"><code class="nw">revl_bad_request</code></th><td>An option header has an invalid value (the message names the header), or the body is not a JSON object</td></tr>
+                  <tr><td>400</td><th scope="row"><code class="nw">revl_oauth_not_supported</code></th><td>Anthropic route: the request carries an <code>Authorization</code> header and no <code>x-api-key</code></td></tr>
+                  <tr><td>400</td><th scope="row"><code class="nw">revl_mask_stream_unsupported</code></th><td>Masking is on and the body sets <code>"stream": true</code></td></tr>
+                  <tr><td>401</td><th scope="row"><code class="nw">revl_unauthorized</code></th><td>Missing, unknown or disabled gateway key</td></tr>
+                  <tr><td>401</td><th scope="row"><code class="nw">revl_missing_provider_key</code></th><td>Missing provider key on either route</td></tr>
+                  <tr><td>404</td><th scope="row"><code class="nw">revl_not_found</code></th><td>Any path that is not listed under <a href="#endpoints">Endpoints</a></td></tr>
+                  <tr><td>405</td><th scope="row"><code class="nw">revl_method_not_allowed</code></th><td>Wrong method on a known path. The response has an <code>Allow</code> header</td></tr>
+                  <tr><td>413</td><th scope="row"><code class="nw">revl_payload_too_large</code></th><td>Request body over 10 MiB</td></tr>
+                  <tr><td>429</td><th scope="row"><code class="nw">revl_rate_limited</code></th><td>Over the tenant rate limit. The response has <code>Retry-After: 60</code></td></tr>
+                  <tr><td>502</td><th scope="row"><code class="nw">revl_upstream_unreachable</code></th><td>The upstream could not be reached after all retries</td></tr>
+                  <tr><td>500</td><th scope="row"><code class="nw">revl_internal_error</code></th><td>Unexpected failure inside the gateway</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p><strong>Provider errors are not rewritten.</strong> The upstream status code and body <a href="#response-headers">pass through unchanged</a>.</p>
+          </section>
+
+          <section id="self-hosting" aria-labelledby="self-hosting-h">
+            <h2 id="self-hosting-h">Self-hosting</h2>
+            <p>The core runs as a Cloudflare Worker with two KV namespaces. You need a Cloudflare account and Node.js. Get the gateway source
+<!--GITHUB_INLINE-->
+            and run the commands below from its root directory. The repository is being published. If you cannot find the link on this page yet, write to <a href="mailto:founder@proxyrevlvay.com">founder@proxyrevlvay.com</a>.</p>
+            <div class="code">
+              <div class="code-head"><span>Shell</span><button type="button" class="copy-btn" data-copy aria-label="Copy self-hosting commands">Copy</button></div>
+              <pre tabindex="0"><code data-sample="selfhost.sh"><span class="t-c"># 1. In the gateway source directory: install dependencies, sign in to Cloudflare</span>
+npm install
+npx wrangler login
+
+<span class="t-c"># 2. Create the two KV namespaces. Each command prints an id.</span>
+npx wrangler kv namespace create KEYS
+npx wrangler kv namespace create CACHE
+
+<span class="t-c"># 3. Put each id in the matching "kv_namespaces" entry in wrangler.jsonc, then deploy</span>
+npx wrangler deploy
+
+<span class="t-c"># 4. Create a gateway key. Only its SHA-256 digest is stored.</span>
+KEY=<span class="t-s">"rvl_live_$(node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))")"</span>
+HASH=<span class="t-s">"$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$KEY")"</span>
+npx wrangler kv key put <span class="t-s">"key:$HASH"</span> <span class="t-s">'{"id":"my-team","label":"first key","disabled":false}'</span> --binding KEYS --remote
+echo <span class="t-s">"$KEY"</span>   <span class="t-c"># send this as X-Revl-Key. The key itself is never stored, so save it now.</span></code></pre>
+            </div>
+            <p>Check the deployment with <code>GET /healthz</code>, which returns <code>{"ok":true,"version":"0.1.0"}</code>. Then follow the <a href="#quickstart">quickstart</a>.</p>
+            <div class="tbl" role="region" aria-label="Self-hosting settings" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Setting</th><th scope="col">Kind</th><th scope="col">Purpose</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row"><code class="nw">KEYS</code></th><td>KV binding</td><td>Gateway key records, stored under <code>key:&lt;hex&gt;</code> where <code>&lt;hex&gt;</code> is the SHA-256 hex digest of the key</td></tr>
+                  <tr><th scope="row"><code class="nw">CACHE</code></th><td>KV binding</td><td>Exact-match cache entries</td></tr>
+                  <tr><th scope="row"><code class="nw">RATE_LIMITER</code></th><td class="nw">Rate limiting binding</td><td>Per-tenant rate limit, 60 requests per 60 seconds by default. If absent, the gateway does not rate limit</td></tr>
+                  <tr><th scope="row"><code class="nw">REQUIRE_GATEWAY_KEY</code></th><td>Variable</td><td>Defaults to <code>"true"</code>. When <code>"false"</code> (local development, single-tenant self-hosting), <code>X-Revl-Key</code> is optional and the tenant id is <code>"public"</code></td></tr>
+                  <tr><th scope="row"><code class="nw">OPENAI_BASE_URL</code><br><code class="nw">ANTHROPIC_BASE_URL</code></th><td>Variables</td><td>Override the upstream, for tests or a regional endpoint. When unset, the upstreams listed under <a href="#endpoints">Endpoints</a> are used</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="data-handling" aria-labelledby="data-handling-h">
+            <h2 id="data-handling-h">Data handling</h2>
+            <p>What the core stores and logs, and what it does not.</p>
+            <div class="tbl" role="region" aria-label="Data handling" tabindex="0">
+              <table>
+                <thead>
+                  <tr><th scope="col">Data</th><th scope="col">What happens to it</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row" class="nw">Provider API key</th><td>Forwarded upstream for that one request. Never written to storage, never logged, never used for any other caller.</td></tr>
+                  <tr><th scope="row" class="nw">Gateway key</th><td>Only its SHA-256 hex digest is stored, in the KV binding <code>KEYS</code>, with a tenant id, a label and a disabled flag.</td></tr>
+                  <tr><th scope="row" class="nw">Request body</th><td>Forwarded unchanged unless masking is on. Never logged. With caching on, it is hashed into the SHA-256 cache key; the stored entry holds the response only.</td></tr>
+                  <tr><th scope="row" class="nw">Response body</th><td>Never logged. Stored only as a cache entry, when you turn caching on and the response <a href="#caching">qualifies</a>.</td></tr>
+                  <tr><th scope="row" class="nw">Masking mapping</th><td>Kept only in memory for the duration of the request.</td></tr>
+                  <tr><th scope="row" class="nw">Request log</th><td>One JSON line per request with <code>request_id</code>, <code>tenant</code>, <code>route</code>, <code>model</code>, <code>status</code>, <code>cache</code>, <code>upstream_ms</code>, <code>masked</code>, <code>retries</code> and <code>stream</code>. No bodies, no headers, no key material, no key hashes.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>This describes the open-source core. This website collects waitlist email addresses only; see the <a href="privacy.html">Privacy Policy</a>.</p>
+          </section>
+
+          <section id="status" aria-labelledby="status-h">
+            <h2 id="status-h">Available now and roadmap</h2>
+            <p>Roadmap items are not built yet and are in no committed order.</p>
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5">
+                <h3 class="!mt-0">Available in core v0.1</h3>
+                <ul class="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-zinc-400">
+                  <li>BYOK passthrough for the OpenAI Chat Completions API and the Anthropic Messages API</li>
+                  <li>Gateway access keys</li>
+                  <li>Exact-match response caching</li>
+                  <li>PII and secret masking with rehydration (non-streaming)</li>
+                  <li>Retries</li>
+                  <li>Per-tenant rate limiting</li>
+                  <li>Streaming passthrough</li>
+                  <li>Metadata-only logging</li>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-dashed border-zinc-700 bg-zinc-900/40 p-5">
+                <h3 class="!mt-0">Roadmap, not built yet</h3>
+                <ul class="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-zinc-400">
+                  <li>Semantic (embedding-based) caching</li>
+                  <li>Caching and rehydration for streamed responses</li>
+                  <li>Cross-provider fallback</li>
+                  <li>Usage dashboard and analytics API</li>
+                  <li>Per-key budgets and per-key rate limits</li>
+                  <li>SSO and SCIM</li>
+                  <li>Custom masking detectors</li>
+                </ul>
+              </div>
+            </div>
+            <p>Found something on this page that does not match what the gateway does? Tell us at <a href="mailto:founder@proxyrevlvay.com">founder@proxyrevlvay.com</a>.</p>
+          </section>
+
+        </article>
+      </div>
+      <p id="copy-status" class="sr-only" role="status" aria-live="polite"></p>
+    </div>
+  </main>
+
+  <footer class="border-t border-zinc-900 bg-zinc-950">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+        <div>
+          <a href="index.html" class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white">R</span>
+            <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+          </a>
+          <p class="mt-3 text-sm text-zinc-500">Founder: <a href="https://www.linkedin.com/in/luat-nguyen-2bb064443/" target="_blank" rel="noopener noreferrer" class="text-zinc-300 transition hover:text-white">Luat Nguyen</a></p>
+          <p class="mt-1 text-sm text-zinc-500">Support: <a href="mailto:founder@proxyrevlvay.com" class="text-zinc-300 transition hover:text-white">founder@proxyrevlvay.com</a></p>
+        </div>
+        <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500">
+          <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+          <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+          <li><a href="about.html" class="transition hover:text-white">About</a></li>
+          <!--GITHUB_FOOTER-->
+          <li><a href="privacy.html" class="transition hover:text-white">Privacy Policy</a></li>
+          <li><a href="terms.html" class="transition hover:text-white">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="mt-8 border-t border-zinc-900 pt-6 text-sm text-zinc-500">
+        <p>Copyright &copy; 2026 Revl AI. All rights reserved.</p>
+        <p class="mt-2 max-w-3xl text-xs leading-relaxed text-zinc-600">Revl AI is an independent project. It is not affiliated with, endorsed by or sponsored by Anthropic or OpenAI. Claude is a trademark of Anthropic, PBC. OpenAI and GPT are trademarks of OpenAI. You use each model provider under your own account and that provider's terms.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('nav-toggle');
+      var menu = document.getElementById('mobile-menu');
+      if (!toggle || !menu) return;
+      var iconMenu = document.getElementById('icon-menu');
+      var iconClose = document.getElementById('icon-close');
+      toggle.addEventListener('click', function () {
+        var open = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !open);
+        iconMenu.classList.toggle('hidden', open);
+        iconClose.classList.toggle('hidden', !open);
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+    })();
+  </script>
+  <!-- PAGE-SPECIFIC SCRIPT GOES BELOW THIS LINE -->
+  <script>
+    /* Tabs: click, Left/Right, Home/End. Selection follows focus. */
+    (function () {
+      var groups = document.querySelectorAll('[data-tabs]');
+      Array.prototype.forEach.call(groups, function (group) {
+        var tabs = Array.prototype.slice.call(group.querySelectorAll('[role="tab"]'));
+        if (!tabs.length) return;
+        function select(tab, moveFocus) {
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.setAttribute('aria-selected', String(on));
+            t.tabIndex = on ? 0 : -1;
+            var panel = document.getElementById(t.getAttribute('aria-controls'));
+            if (panel) panel.hidden = !on;
+          });
+          if (moveFocus) tab.focus();
+        }
+        tabs.forEach(function (tab, i) {
+          tab.addEventListener('click', function () { select(tab, false); });
+          tab.addEventListener('keydown', function (e) {
+            var next = null;
+            if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+            else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+            else if (e.key === 'Home') next = 0;
+            else if (e.key === 'End') next = tabs.length - 1;
+            if (next === null) return;
+            e.preventDefault();
+            select(tabs[next], true);
+          });
+        });
+        var current = tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0];
+        select(current, false);
+        group.setAttribute('data-ready', '');
+      });
+    })();
+
+    /* Copy buttons: Clipboard API first, then execCommand, then select the code for a manual copy. */
+    (function () {
+      var status = document.getElementById('copy-status');
+      function legacyCopy(text) {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.top = '-1000px';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+        document.body.removeChild(area);
+        return ok;
+      }
+      function copyText(text) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return legacyCopy(text); });
+          }
+        } catch (err) { /* fall through to the legacy path */ }
+        return Promise.resolve(legacyCopy(text));
+      }
+      function selectNode(node) {
+        if (!window.getSelection || !document.createRange) return;
+        var range = document.createRange();
+        range.selectNodeContents(node);
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'), function (button) {
+        var timer = null;
+        button.addEventListener('click', function () {
+          var box = button.closest('.code');
+          var code = box ? box.querySelector('pre code') : null;
+          if (!code) return;
+          copyText(code.textContent).then(function (ok) {
+            if (!ok) selectNode(code);
+            button.textContent = ok ? 'Copied' : 'Press Ctrl+C';
+            button.classList.toggle('done', ok);
+            if (status) status.textContent = ok ? 'Code copied to clipboard.' : 'Copy is blocked here. The code is selected, press Ctrl+C to copy it.';
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+              button.textContent = 'Copy';
+              button.classList.remove('done');
+              if (status) status.textContent = '';
+            }, 2000);
+          });
+        });
+      });
+    })();
+
+    /* Table of contents: mark the section being read. */
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+      if (!links.length || !('IntersectionObserver' in window)) return;
+      var byId = {};
+      links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          links.forEach(function (a) { a.classList.remove('active'); a.removeAttribute('aria-current'); });
+          var link = byId[entry.target.id];
+          if (link) { link.classList.add('active'); link.setAttribute('aria-current', 'location'); }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+      Object.keys(byId).forEach(function (id) {
+        var section = document.getElementById(id);
+        if (section) observer.observe(section);
+      });
+    })();
+  </script>
+</body>
+</html>

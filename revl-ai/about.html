@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Revl AI</title>
+  <meta name="description" content="Revl AI is an early-stage, founder-led project building an open-source, bring-your-own-key gateway for the Anthropic and OpenAI APIs.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://proxyrevlvay.com/about">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="About — Revl AI">
+  <meta property="og:description" content="Revl AI is an early-stage, founder-led project building an open-source, bring-your-own-key gateway for the Anthropic and OpenAI APIs.">
+  <meta property="og:url" content="https://proxyrevlvay.com/about">
+  <meta property="og:site_name" content="Revl AI">
+  <meta property="og:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Revl AI: bring-your-own-key AI gateway for Claude and OpenAI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About — Revl AI">
+  <meta name="twitter:description" content="Revl AI is an early-stage, founder-led project building an open-source, bring-your-own-key gateway for the Anthropic and OpenAI APIs.">
+  <meta name="twitter:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Cpath d='M9 23V9h7.5a4.5 4.5 0 0 1 1.6 8.7L23 23h-3.6l-4.3-5H12v5H9zm3-7.8h4.4a1.8 1.8 0 1 0 0-3.6H12v3.6z' fill='white'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8',
+              500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81',
+            },
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(99,102,241,.25), 0 20px 60px -20px rgba(99,102,241,.45)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Readable even if the Tailwind script fails to load. */
+    body { background: #09090b; color: #e4e4e7; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    .card-border { position: relative; }
+    .card-border::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(99,102,241,.5), rgba(255,255,255,.06) 40%, rgba(236,72,153,.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    /* PAGE-SPECIFIC STYLES GO BELOW THIS LINE */
+    main a:focus-visible { outline: 2px solid #818cf8; outline-offset: 3px; border-radius: 6px; }
+    main a.inline-link { color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(165,180,252,.4); text-underline-offset: 3px; }
+    main a.inline-link:hover { color: #c7d2fe; }
+    /* Keeps the current item aligned with the other items in the mobile menu. */
+    #mobile-menu a[aria-current="page"] { display: block; border-radius: .5rem; padding: .625rem .75rem; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto !important; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://proxyrevlvay.com/#org","name":"Revl AI","url":"https://proxyrevlvay.com/","logo":"https://proxyrevlvay.com/icon-512.png","email":"founder@proxyrevlvay.com","description":"Open-source, bring-your-own-key AI gateway and reverse proxy for the Anthropic and OpenAI APIs.","founder":{"@type":"Person","@id":"https://proxyrevlvay.com/about#founder","name":"Luat Nguyen","jobTitle":"Founder","sameAs":["https://www.linkedin.com/in/luat-nguyen-2bb064443/"]},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"founder@proxyrevlvay.com"}},{"@type":"AboutPage","@id":"https://proxyrevlvay.com/about","url":"https://proxyrevlvay.com/about","name":"About — Revl AI","description":"Revl AI is an early-stage, founder-led project building an open-source, bring-your-own-key gateway for the Anthropic and OpenAI APIs.","about":{"@id":"https://proxyrevlvay.com/#org"},"inLanguage":"en"}]}</script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-200 antialiased selection:bg-brand-500/30 selection:text-white">
+
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Primary">
+      <a href="index.html" class="flex items-center gap-2.5" aria-label="Revl AI home">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white shadow-glow">R</span>
+        <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+      </a>
+
+      <ul class="hidden items-center gap-7 text-sm font-medium text-zinc-400 lg:flex">
+        <li><a href="index.html#features" class="transition hover:text-white">Features</a></li>
+        <li><a href="index.html#architecture" class="transition hover:text-white">Architecture</a></li>
+        <li><a href="index.html#pricing" class="transition hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+        <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+        <li><a href="about.html" class="text-white" aria-current="page">About</a></li>
+      </ul>
+
+      <div class="hidden items-center gap-3 lg:flex">
+        <!--GITHUB_HEADER-->
+        <a href="index.html#waitlist" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">Get API Keys</a>
+      </div>
+
+      <button type="button" id="nav-toggle" class="inline-flex items-center justify-center rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white lg:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <svg id="icon-menu" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        <svg id="icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+    </nav>
+
+    <div id="mobile-menu" class="hidden border-t border-zinc-800 bg-zinc-950/95 px-4 pb-6 pt-4 lg:hidden">
+      <ul class="flex flex-col gap-1 text-base font-medium text-zinc-300">
+        <li><a href="index.html#features" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Features</a></li>
+        <li><a href="index.html#architecture" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Architecture</a></li>
+        <li><a href="index.html#pricing" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Docs</a></li>
+        <li><a href="demo.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Demo</a></li>
+        <li><a href="about.html" class="text-white" aria-current="page">About</a></li>
+      </ul>
+      <a href="index.html#waitlist" class="mt-4 block w-full rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-500">Get API Keys</a>
+    </div>
+  </header>
+
+  <main class="pt-28 pb-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+      <!-- 1. What Revl AI is -->
+      <section class="max-w-3xl" aria-labelledby="about-title">
+        <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">About</p>
+        <h1 id="about-title" class="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">About Revl AI</h1>
+        <p class="mt-5 text-lg leading-relaxed text-zinc-400">Revl AI is an early-stage, founder-led project. It builds an open-source, bring-your-own-key gateway that sits between your application and model providers (Anthropic and OpenAI).</p>
+      </section>
+
+      <!-- 2. Why it exists -->
+      <section class="mt-20" aria-labelledby="why-title">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Why it exists</p>
+          <h2 id="why-title" class="mt-3 text-3xl font-bold tracking-tight text-white">What the gateway is for</h2>
+        </div>
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">The problem</h3>
+            <p class="mt-4 leading-relaxed text-zinc-400">When an application calls a model API directly:</p>
+            <ul class="mt-3 list-disc space-y-3 pl-5 leading-relaxed text-zinc-400 marker:text-brand-500">
+              <li>A repeated, identical request is a new upstream call each time.</li>
+              <li>Email addresses, secrets and other private values in a prompt reach the provider as written.</li>
+              <li>Rate limits and retry settings are kept separately in each service.</li>
+            </ul>
+          </div>
+          <div class="card-border rounded-2xl bg-zinc-900/70 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">The approach</h3>
+            <p class="mt-4 leading-relaxed text-zinc-400">A thin gateway that speaks each provider's native format. You keep using the provider's SDK with your own API key, and point its base URL at the gateway. Caching, masking and retries are then opt-in per request, each with a single header.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Principles -->
+      <section class="mt-20" aria-labelledby="principles-title">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Principles</p>
+          <h2 id="principles-title" class="mt-3 text-3xl font-bold tracking-tight text-white">The rules the gateway is built on</h2>
+        </div>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Bring your own key</h3>
+            <p class="mt-2 leading-relaxed text-zinc-400">The gateway holds no model-provider credentials. Each request carries your own provider API key, which is forwarded for that one request and never stored or logged.</p>
+          </article>
+          <article class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Native wire formats</h3>
+            <p class="mt-2 leading-relaxed text-zinc-400">No translation layer. OpenAI-format requests go to OpenAI and Anthropic-format requests go to Anthropic, with the body unchanged unless you turn on masking.</p>
+          </article>
+          <article class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5h6v15h-6zM13.5 4.5h6v15h-6z"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Tenant isolation</h3>
+            <p class="mt-2 leading-relaxed text-zinc-400">Cache entries and rate limits are scoped to your gateway key (the tenant). A cache entry is also bound to a hash of your provider key, so a cached response is never served to a different provider account.</p>
+          </article>
+          <article class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Private by default</h3>
+            <p class="mt-2 leading-relaxed text-zinc-400">Request and response bodies are never logged. The gateway logs one line of metadata per request, with no bodies, no headers and no key material.</p>
+          </article>
+          <article class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">API keys only</h3>
+            <p class="mt-2 leading-relaxed text-zinc-400">OAuth and consumer subscription tokens are rejected. The gateway is for your own pay-as-you-go provider API account, not for pooling or sharing subscriptions.</p>
+          </article>
+          <article class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-inset ring-brand-500/20">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Open-source core</h3>
+            <p class="mt-2 leading-relaxed text-zinc-400">The gateway core is open source. Anyone can self-host it on their own Cloudflare account.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 4. Provider access (BYOK statement) -->
+      <section class="mt-20" aria-labelledby="providers-title">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Bring your own key</p>
+          <h2 id="providers-title" class="mt-3 text-3xl font-bold tracking-tight text-white">How provider access works</h2>
+        </div>
+        <div class="card-border mt-8 rounded-2xl bg-zinc-900/70 p-6 sm:p-8">
+          <dl class="grid gap-x-10 gap-y-6 md:grid-cols-2">
+            <div>
+              <dt class="font-semibold text-white">No resale of model access</dt>
+              <dd class="mt-1 leading-relaxed text-zinc-400">Revl AI does not resell, sublicense, pool or share model-provider API access.</dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-white">Your key, your provider account</dt>
+              <dd class="mt-1 leading-relaxed text-zinc-400">Every request is authenticated to Anthropic or OpenAI with your own API key, under your own provider account and billing, and under that provider's terms and usage policies.</dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-white">Keys pass through</dt>
+              <dd class="mt-1 leading-relaxed text-zinc-400">A provider key is forwarded for the single request it arrives with. It is never stored and never logged.</dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-white">API keys only</dt>
+              <dd class="mt-1 leading-relaxed text-zinc-400">OAuth tokens and consumer subscription tokens are rejected. Only provider API keys are accepted.</dd>
+            </div>
+            <div class="md:col-span-2">
+              <dt class="font-semibold text-white">Charges are for the gateway only</dt>
+              <dd class="mt-1 leading-relaxed text-zinc-400">Revl charges only for the gateway, never for model usage. Model usage stays on your own provider account and is billed by that provider.</dd>
+            </div>
+          </dl>
+          <p class="mt-8 border-t border-zinc-800 pt-6 text-sm leading-relaxed text-zinc-400">Revl AI is an independent project. It is not affiliated with, endorsed by or sponsored by Anthropic or OpenAI.</p>
+        </div>
+      </section>
+
+      <!-- 5. Where the project is today -->
+      <section class="mt-20" aria-labelledby="status-title">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Status</p>
+          <h2 id="status-title" class="mt-3 text-3xl font-bold tracking-tight text-white">Where the project is today</h2>
+        </div>
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">Available now</h3>
+            <p class="mt-1 text-sm text-zinc-400">In the open-source core today.</p>
+            <ul class="mt-5 space-y-3 text-sm text-zinc-300">
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>BYOK passthrough for the OpenAI Chat Completions API and the Anthropic Messages API</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>Gateway access keys</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>Exact-match response caching</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>PII and secret masking with rehydration, for non-streaming requests</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>Retries</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>Per-tenant rate limiting</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>Streaming passthrough</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>Metadata-only logging</span></li>
+            </ul>
+            <p class="mt-5 border-t border-zinc-800 pt-4 text-sm leading-relaxed text-zinc-400">Masking is pattern based. It will miss things and is not a compliance control by itself.</p>
+          </div>
+          <div class="rounded-2xl border border-dashed border-zinc-700 bg-zinc-900/20 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">Roadmap</h3>
+            <p class="mt-1 text-sm text-zinc-400">Not built yet, and in no committed order.</p>
+            <ul class="mt-5 space-y-3 text-sm text-zinc-300">
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>Semantic caching</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>Streaming cache and streaming rehydration</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>Cross-provider fallback</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>Usage dashboard and analytics</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>Per-key budgets and per-key rate limits</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>SSO and SCIM</span></li>
+              <li class="flex gap-3"><svg class="mt-0.5 h-4 w-4 flex-none text-zinc-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg><span>Custom masking detectors</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">Hosted gateway</h3>
+            <p class="mt-3 leading-relaxed text-zinc-400">The hosted gateway at <code class="break-all rounded bg-zinc-800/80 px-1.5 py-0.5 font-mono text-sm text-zinc-200">https://api.proxyrevlvay.com</code> is invite-only and is being rolled out to the waitlist. It is not generally available.</p>
+          </div>
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">Self-hosting</h3>
+            <p class="mt-3 leading-relaxed text-zinc-400">
+              You can self-host the core on your own Cloudflare account today. The source repository is being published
+              <!--GITHUB_INLINE-->
+              so that you can read what the gateway does with a request before you run it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Who is behind it -->
+      <section class="mt-20" aria-labelledby="who-title">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Contact</p>
+          <h2 id="who-title" class="mt-3 text-3xl font-bold tracking-tight text-white">Who is behind it</h2>
+          <p class="mt-5 leading-relaxed text-zinc-400">Revl AI is an early-stage, founder-led project. To get in touch, write to <a href="mailto:founder@proxyrevlvay.com" class="inline-link">founder@proxyrevlvay.com</a>.</p>
+          <div class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8">
+            <h3 class="text-lg font-semibold text-white">Luat Nguyen</h3>
+            <p class="mt-1 text-sm font-medium text-brand-300">Founder</p>
+            <!-- Add a two-line bio and a location here when you want them shown. -->
+            <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <li><a href="https://www.linkedin.com/in/luat-nguyen-2bb064443/" target="_blank" rel="me noopener noreferrer" class="inline-link">LinkedIn</a></li>
+              <li><a href="mailto:founder@proxyrevlvay.com" class="inline-link">Email</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Next steps -->
+      <section class="mt-20" aria-labelledby="next-title">
+        <div class="card-border rounded-2xl bg-zinc-900/70 p-6 sm:p-10">
+          <h2 id="next-title" class="text-2xl font-bold tracking-tight text-white sm:text-3xl">Check it for yourself</h2>
+          <p class="mt-3 max-w-2xl leading-relaxed text-zinc-400">Read how the gateway behaves, watch a simulated dashboard, or ask for access to the hosted gateway.</p>
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a href="docs.html" class="rounded-lg bg-brand-600 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-brand-500">Read the docs</a>
+            <a href="demo.html" class="rounded-lg border border-zinc-700 px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:border-zinc-500 hover:bg-zinc-800">Try the simulated demo</a>
+            <a href="index.html#waitlist" class="rounded-lg border border-zinc-700 px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:border-zinc-500 hover:bg-zinc-800">Join the waitlist</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-zinc-900 bg-zinc-950">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+        <div>
+          <a href="index.html" class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white">R</span>
+            <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+          </a>
+          <p class="mt-3 text-sm text-zinc-500">Founder: <a href="https://www.linkedin.com/in/luat-nguyen-2bb064443/" target="_blank" rel="noopener noreferrer" class="text-zinc-300 transition hover:text-white">Luat Nguyen</a></p>
+          <p class="mt-1 text-sm text-zinc-500">Support: <a href="mailto:founder@proxyrevlvay.com" class="text-zinc-300 transition hover:text-white">founder@proxyrevlvay.com</a></p>
+        </div>
+        <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500">
+          <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+          <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+          <li><a href="about.html" class="transition hover:text-white">About</a></li>
+          <!--GITHUB_FOOTER-->
+          <li><a href="privacy.html" class="transition hover:text-white">Privacy Policy</a></li>
+          <li><a href="terms.html" class="transition hover:text-white">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="mt-8 border-t border-zinc-900 pt-6 text-sm text-zinc-500">
+        <p>Copyright &copy; 2026 Revl AI. All rights reserved.</p>
+        <p class="mt-2 max-w-3xl text-xs leading-relaxed text-zinc-600">Revl AI is an independent project. It is not affiliated with, endorsed by or sponsored by Anthropic or OpenAI. Claude is a trademark of Anthropic, PBC. OpenAI and GPT are trademarks of OpenAI. You use each model provider under your own account and that provider's terms.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('nav-toggle');
+      var menu = document.getElementById('mobile-menu');
+      if (!toggle || !menu) return;
+      var iconMenu = document.getElementById('icon-menu');
+      var iconClose = document.getElementById('icon-close');
+      toggle.addEventListener('click', function () {
+        var open = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !open);
+        iconMenu.classList.toggle('hidden', open);
+        iconClose.classList.toggle('hidden', !open);
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+    })();
+  </script>
+  <!-- PAGE-SPECIFIC SCRIPT GOES BELOW THIS LINE -->
+</body>
+</html>

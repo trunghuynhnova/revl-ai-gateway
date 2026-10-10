@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo — Revl AI</title>
+  <meta name="description" content="Interactive demo of the Revl AI gateway. A simulated dashboard for exact-match caching and masking, generated entirely in your browser.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://proxyrevlvay.com/demo">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Demo — Revl AI">
+  <meta property="og:description" content="Interactive demo of the Revl AI gateway. A simulated dashboard for exact-match caching and masking, generated entirely in your browser.">
+  <meta property="og:url" content="https://proxyrevlvay.com/demo">
+  <meta property="og:site_name" content="Revl AI">
+  <meta property="og:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Revl AI: bring-your-own-key AI gateway for Claude and OpenAI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Demo — Revl AI">
+  <meta name="twitter:description" content="Interactive demo of the Revl AI gateway. A simulated dashboard for exact-match caching and masking, generated entirely in your browser.">
+  <meta name="twitter:image" content="https://proxyrevlvay.com/og-image.png">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Cpath d='M9 23V9h7.5a4.5 4.5 0 0 1 1.6 8.7L23 23h-3.6l-4.3-5H12v5H9zm3-7.8h4.4a1.8 1.8 0 1 0 0-3.6H12v3.6z' fill='white'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8',
+              500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81',
+            },
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(99,102,241,.25), 0 20px 60px -20px rgba(99,102,241,.45)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Readable even if the Tailwind script fails to load. */
+    body { background: #09090b; color: #e4e4e7; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    .card-border { position: relative; }
+    .card-border::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(99,102,241,.5), rgba(255,255,255,.06) 40%, rgba(236,72,153,.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    /* PAGE-SPECIFIC STYLES GO BELOW THIS LINE */
+    #mobile-menu a[aria-current="page"] { display: block; border-radius: .5rem; padding: .625rem .75rem; }
+
+    /* Demo dashboard. Colour roles: --s1 cache hit, --s2 upstream call (validated as a
+       pair against --surface for colour-vision separation and 3:1 contrast). The upstream
+       series is also dashed, so the two lines never depend on colour alone. */
+    #dash {
+      --surface: #0f0f11; --ink: #fff; --ink-2: #a1a1aa; --ink-3: #d4d4d8;
+      --line: #27272a; --s1: #6366f1; --s2: #d95926; --crit: #d03b3b;
+    }
+    #dash > * + * { margin-top: 1rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+    .d-mono, .d-hint code, .d-how code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; }
+
+    .d-notice {
+      display: flex; gap: .625rem; align-items: flex-start; padding: .625rem .875rem;
+      border: 1px solid rgba(245,158,11,.55); border-radius: .75rem; background: #1f1606;
+      color: #fde68a; font-size: .875rem; line-height: 1.45;
+    }
+    .d-notice strong { color: #fff; font-weight: 600; }
+    .d-notice svg { flex: none; width: 1.125rem; height: 1.125rem; margin-top: .0625rem; }
+    @media (min-width: 768px) {
+      .d-notice { position: sticky; top: var(--hdr, 4.5rem); z-index: 30; box-shadow: 0 8px 20px -8px rgba(0,0,0,.8); }
+    }
+
+    .d-panel { border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); padding: 1rem; min-width: 0; }
+    @media (min-width: 640px) { .d-panel { padding: 1.25rem; } }
+    .d-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .375rem .75rem; }
+    .d-head h2 { margin: 0; font-size: .9375rem; font-weight: 600; color: var(--ink); }
+    .d-tag {
+      border: 1px solid rgba(245,158,11,.5); border-radius: 999px; padding: .1875rem .5rem; color: #fde68a;
+      font: 500 .6875rem/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+    }
+    .d-sub { margin: .25rem 0 0; font-size: .8125rem; line-height: 1.5; color: var(--ink-2); }
+
+    /* Controls */
+    .d-ctls { display: grid; gap: 1rem 1.75rem; margin-top: .875rem; }
+    @media (min-width: 640px) { .d-ctls { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1100px) { .d-ctls { grid-template-columns: max-content max-content minmax(0, 1fr) minmax(0, 1fr) max-content; } }
+    .d-ctl label { color: var(--ink); font-size: .875rem; font-weight: 500; }
+    .d-ctl output { float: right; color: var(--ink); font-size: .875rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .d-ctl input[type="range"] { display: block; width: 100%; margin: .5rem 0 0; accent-color: #6366f1; }
+    .d-hint { margin: .375rem 0 0; font-size: .75rem; line-height: 1.45; color: var(--ink-2); }
+    .d-hint code { font-size: .6875rem; color: var(--ink-3); }
+    .d-switch { position: relative; display: inline-flex; align-items: center; gap: .625rem; cursor: pointer; }
+    .d-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .d-track { position: relative; flex: none; width: 2.5rem; height: 1.375rem; border-radius: 999px; background: #71717a; transition: background-color .15s; }
+    .d-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 1rem; height: 1rem; border-radius: 50%; background: #fff; transition: transform .15s; }
+    .d-switch input:checked + .d-track { background: #6366f1; }
+    .d-switch input:checked + .d-track::after { transform: translateX(1.125rem); }
+    .d-btns { display: flex; gap: .5rem; align-items: flex-start; }
+    .d-btns .d-btn { min-width: 5.5rem; border: 1px solid #52525b; border-radius: .5rem; background: #18181b; padding: .5rem .875rem; color: #fff; font-size: .875rem; font-weight: 600; cursor: pointer; }
+    .d-btns .d-btn:hover { background: #27272a; }
+    .d-btn:focus-visible, .d-ctl input[type="range"]:focus-visible, .d-switch input:focus-visible + .d-track,
+    .d-plot:focus-visible, .d-scroll:focus-visible, .d-tv summary:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
+
+    /* KPI tiles */
+    .d-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: .875rem 0 0; border: 1px solid var(--line); border-radius: .75rem; background: var(--line); overflow: hidden; }
+    @media (min-width: 768px) { .d-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1100px) { .d-kpis { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+    .d-kpi { background: var(--surface); padding: .75rem .875rem; }
+    .d-kpi dt { font-size: .75rem; color: var(--ink-2); }
+    .d-kpi dd { margin: 0; }
+    .d-kpi .d-v { margin-top: .125rem; font-size: 1.5rem; line-height: 1.25; font-weight: 600; color: var(--ink); }
+    .d-kpi .d-c { margin-top: .25rem; font-size: .6875rem; line-height: 1.4; color: var(--ink-2); }
+
+    /* Charts */
+    .d-charts { display: grid; gap: 1rem; }
+    @media (min-width: 1024px) { .d-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .d-legend { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: .5rem 0 0; padding: 0; list-style: none; font-size: .75rem; color: var(--ink-3); }
+    .d-legend span span { color: var(--ink-2); }
+    .d-key { display: inline-block; width: 18px; height: 2px; margin-right: .375rem; border-radius: 1px; vertical-align: middle; }
+    .d-k1 { background: var(--s1); }
+    .d-k2 { background: linear-gradient(90deg, var(--s2) 0 7px, transparent 7px 11px, var(--s2) 11px 18px); }
+    .d-kbar { width: 8px; height: 8px; border-radius: 2px; }
+    .d-plot { position: relative; margin-top: .5rem; border-radius: .5rem; }
+    .d-plot svg { display: block; width: 100%; height: 220px; overflow: visible; }
+    .d-plot text { font: 11px Inter, ui-sans-serif, system-ui, sans-serif; fill: #a1a1aa; font-variant-numeric: tabular-nums; }
+    .d-plot .d-yl { text-anchor: end; }
+    .d-plot .d-xl, .d-plot .d-xt { text-anchor: middle; }
+    .d-plot .d-val { fill: #fff; font-weight: 600; }
+    .d-plot .d-markt { fill: #d4d4d8; font-size: 10.5px; }
+    .d-grid { stroke: #27272a; }
+    .d-axis { stroke: #52525b; }
+    .d-mark { stroke: #a1a1aa; }
+    .d-cross { stroke: #71717a; }
+    .d-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .d-line.d-s1 { stroke: var(--s1); }
+    .d-line.d-s2 { stroke: var(--s2); stroke-dasharray: 5 6; }
+    .d-dot { stroke: var(--surface); stroke-width: 2; }
+    .d-dot.d-s1 { fill: var(--s1); }
+    .d-dot.d-s2 { fill: var(--s2); }
+    .d-bar { fill: var(--s1); }
+    .d-bar.d-on { fill: #818cf8; }
+    .d-tip {
+      position: absolute; top: 2px; z-index: 5; pointer-events: none; width: max-content; max-width: 15rem;
+      border: 1px solid #3f3f46; border-radius: .5rem; background: #18181b; padding: .5rem .625rem;
+      font-size: .75rem; line-height: 1.5; color: var(--ink-2); box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    }
+    .d-tip b { color: #fff; font-weight: 600; }
+    .d-sum { margin: .5rem 0 0; font-size: .75rem; line-height: 1.5; color: var(--ink-2); }
+    .d-tv { margin-top: .5rem; font-size: .75rem; color: var(--ink-2); }
+    .d-tv summary { width: max-content; border-radius: .25rem; color: var(--ink-3); cursor: pointer; }
+    .d-scroll { overflow: auto; border: 1px solid var(--line); border-radius: .75rem; }
+    .d-tv .d-scroll { max-height: 14rem; margin-top: .5rem; }
+
+    /* Tables (chart table views and the request log) */
+    .d-table { width: 100%; border-collapse: collapse; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .d-table th, .d-table td { padding: .375rem .75rem; border-bottom: 1px solid #1f1f23; text-align: left; font-weight: 400; color: var(--ink-3); }
+    .d-table thead th { position: sticky; top: 0; z-index: 1; background: #18181b; border-bottom-color: var(--line); font-weight: 500; }
+    .d-table .d-num { text-align: right; }
+    .d-table .d-dim, .d-table td span.d-dim { color: var(--ink-2); }
+    .d-log { max-height: 23rem; margin-top: .75rem; }
+    .d-log .d-table { font: 12px/1.45 "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; }
+    .d-st { display: inline-block; width: 8px; height: 8px; margin-right: .4375rem; border-radius: 50%; }
+    .d-hit { background: var(--s1); }
+    .d-miss { background: var(--s2); }
+    .d-byp { box-shadow: inset 0 0 0 2px var(--s2); }
+    .d-err::before { content: ''; display: inline-block; margin-right: .375rem; border: 4px solid transparent; border-top: 0; border-bottom: 7px solid var(--crit); }
+    @media (prefers-reduced-motion: no-preference) {
+      .d-new td { animation: d-rowin 1.2s ease-out; }
+      @keyframes d-rowin { from { background: rgba(99,102,241,.2); } to { background: transparent; } }
+    }
+    @media (prefers-reduced-motion: reduce) { .d-track, .d-track::after { transition: none; } }
+
+    /* How it works */
+    .d-how { margin: 1.25rem 0 0; border-top: 1px solid var(--line, #27272a); }
+    .d-how > div { display: grid; gap: .25rem 1.5rem; padding: .75rem 0; border-bottom: 1px solid #27272a; }
+    @media (min-width: 768px) { .d-how > div { grid-template-columns: 10rem minmax(0, 1fr); } }
+    .d-how dt { font-size: .875rem; font-weight: 600; color: #fff; }
+    .d-how dd { margin: 0; font-size: .875rem; line-height: 1.6; color: #a1a1aa; }
+    .d-how code { font-size: .8125em; color: #d4d4d8; overflow-wrap: anywhere; }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://proxyrevlvay.com/demo","url":"https://proxyrevlvay.com/demo","name":"Demo — Revl AI","description":"Interactive demo of the Revl AI gateway. A simulated dashboard for exact-match caching and masking, generated entirely in your browser.","inLanguage":"en","isPartOf":{"@type":"WebSite","url":"https://proxyrevlvay.com/","name":"Revl AI"}}]}</script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-200 antialiased selection:bg-brand-500/30 selection:text-white">
+
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Primary">
+      <a href="index.html" class="flex items-center gap-2.5" aria-label="Revl AI home">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white shadow-glow">R</span>
+        <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+      </a>
+
+      <ul class="hidden items-center gap-7 text-sm font-medium text-zinc-400 lg:flex">
+        <li><a href="index.html#features" class="transition hover:text-white">Features</a></li>
+        <li><a href="index.html#architecture" class="transition hover:text-white">Architecture</a></li>
+        <li><a href="index.html#pricing" class="transition hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+        <li><a href="demo.html" class="text-white" aria-current="page">Demo</a></li>
+        <li><a href="about.html" class="transition hover:text-white">About</a></li>
+      </ul>
+
+      <div class="hidden items-center gap-3 lg:flex">
+        <!--GITHUB_HEADER-->
+        <a href="index.html#waitlist" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">Get API Keys</a>
+      </div>
+
+      <button type="button" id="nav-toggle" class="inline-flex items-center justify-center rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white lg:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <svg id="icon-menu" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        <svg id="icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+    </nav>
+
+    <div id="mobile-menu" class="hidden border-t border-zinc-800 bg-zinc-950/95 px-4 pb-6 pt-4 lg:hidden">
+      <ul class="flex flex-col gap-1 text-base font-medium text-zinc-300">
+        <li><a href="index.html#features" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Features</a></li>
+        <li><a href="index.html#architecture" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Architecture</a></li>
+        <li><a href="index.html#pricing" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Pricing</a></li>
+        <li><a href="docs.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Docs</a></li>
+        <li><a href="demo.html" class="text-white" aria-current="page">Demo</a></li>
+        <li><a href="about.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">About</a></li>
+      </ul>
+      <a href="index.html#waitlist" class="mt-4 block w-full rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-500">Get API Keys</a>
+    </div>
+  </header>
+
+  <main class="pt-28 pb-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <p class="text-sm font-semibold uppercase tracking-wider text-brand-400">Demo</p>
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Simulated gateway dashboard</h1>
+        <p class="mt-4 leading-relaxed text-zinc-400">Change the workload and the gateway options, then watch how exact-match caching, masking, retries and streaming bypass behave. The numbers come from a small model that runs in this page, not from a gateway. The open-source core v0.1 has no dashboard; a usage dashboard is on the roadmap.</p>
+      </div>
+
+      <div id="dash" class="mt-8">
+        <p class="d-notice" role="note">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.25v3.25a.75.75 0 0 0 1.5 0v-4A.75.75 0 0 0 10 9H9Z" clip-rule="evenodd"/></svg>
+          <span><strong>Simulated data.</strong> Everything on this page is generated in your browser for illustration. It is not live traffic, customer data or a benchmark.</span>
+        </p>
+
+        <noscript><p class="d-panel">This demo needs JavaScript. It runs entirely in your browser and sends nothing anywhere.</p></noscript>
+
+        <section class="d-panel" aria-labelledby="ctl-title">
+          <div class="d-head"><h2 id="ctl-title">Simulation controls</h2><span class="d-tag">simulated</span></div>
+          <p class="d-sub"><span id="d-status" role="status"></span> Simulation time <span id="d-clock" class="d-mono">0:00</span></p>
+          <div class="d-ctls">
+            <div class="d-ctl">
+              <label class="d-switch" for="c-cache"><input type="checkbox" id="c-cache" role="switch" checked><span class="d-track" aria-hidden="true"></span>Exact-match caching</label>
+              <p class="d-hint"><code>X-Revl-Cache: <span id="h-cache">exact</span></code></p>
+            </div>
+            <div class="d-ctl">
+              <label class="d-switch" for="c-mask"><input type="checkbox" id="c-mask" role="switch"><span class="d-track" aria-hidden="true"></span>Masking</label>
+              <p class="d-hint"><code>X-Revl-Mask: <span id="h-mask">off</span></code></p>
+            </div>
+            <div class="d-ctl">
+              <output id="o-repeat" for="c-repeat">40%</output>
+              <label for="c-repeat">Repeat-prompt ratio</label>
+              <input type="range" id="c-repeat" min="0" max="90" step="5" value="40" autocomplete="off">
+              <p class="d-hint">How often the workload sends an exact copy of an earlier request.</p>
+            </div>
+            <div class="d-ctl">
+              <output id="o-rps" for="c-rps">2</output>
+              <label for="c-rps">Requests per second</label>
+              <input type="range" id="c-rps" min="1" max="10" step="1" value="2" autocomplete="off">
+              <p class="d-hint">Synthetic requests created on each one-second tick.</p>
+            </div>
+            <div class="d-btns">
+              <button type="button" class="d-btn" id="b-pause">Pause</button>
+              <button type="button" class="d-btn" id="b-reset">Reset</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="d-panel" aria-labelledby="kpi-title">
+          <div class="d-head"><h2 id="kpi-title">Key figures</h2><span class="d-tag">simulated</span></div>
+          <p class="d-sub" id="k-win">Window: the charted two minutes of simulated traffic.</p>
+          <p class="d-sub"><span id="k-set">Settings in effect: caching exact, masking off, repeat-prompt ratio 40%, 2 requests per second.</span> Every figure follows from these settings and from the illustrative distributions described below. None is a measurement.</p>
+          <dl class="d-kpis">
+            <div class="d-kpi"><dt>Requests</dt><dd class="d-v" id="k-req">0</dd><dd class="d-c">Simulated rows in the window.</dd></div>
+            <div class="d-kpi"><dt>Cache hit rate</dt><dd class="d-v" id="k-hit">–</dd><dd class="d-c">Simulated HIT rows divided by all rows. Tracks the repeat-prompt ratio.</dd></div>
+            <div class="d-kpi"><dt>Tokens saved</dt><dd class="d-v" id="k-tok">0</dd><dd class="d-c">Sum of tokens on simulated HIT rows.</dd></div>
+            <div class="d-kpi"><dt>Est. cost avoided</dt><dd class="d-v" id="k-usd">$0.00</dd><dd class="d-c">Tokens saved × $5.00 per million tokens, an illustrative price.</dd></div>
+            <div class="d-kpi"><dt>p50 latency</dt><dd class="d-v" id="k-p50">–</dd><dd class="d-c">Simulated median over all rows, hits and upstream calls together.</dd></div>
+            <div class="d-kpi"><dt>p95 latency</dt><dd class="d-v" id="k-p95">–</dd><dd class="d-c">Simulated 95th percentile over all rows.</dd></div>
+          </dl>
+        </section>
+
+        <div class="d-charts">
+          <section class="d-panel" aria-labelledby="lat-title">
+            <div class="d-head"><h2 id="lat-title">Latency: cache hits vs upstream calls</h2><span class="d-tag">simulated</span></div>
+            <p class="d-sub">Median per 5-second interval, in milliseconds, by simulation time. Both latencies are sampled from illustrative distributions, not measured.</p>
+            <ul class="d-legend">
+              <li><span><i class="d-key d-k1" aria-hidden="true"></i>Cache hit <span>(HIT), solid line</span></span></li>
+              <li><span><i class="d-key d-k2" aria-hidden="true"></i>Upstream call <span>(MISS or BYPASS), dashed line</span></span></li>
+            </ul>
+            <div class="d-plot" id="lat-plot" tabindex="0" role="img" aria-labelledby="lat-title" aria-describedby="lat-sum d-keys">
+              <svg aria-hidden="true"></svg>
+              <div class="d-tip" hidden></div>
+            </div>
+            <p class="d-sum" id="lat-sum"></p>
+            <details class="d-tv" id="lat-table">
+              <summary>View as table</summary>
+              <div class="d-scroll" tabindex="0" role="region" aria-label="Latency by interval, table view">
+                <table class="d-table">
+                  <caption class="sr-only">Simulated median latency per 5-second interval</caption>
+                  <thead><tr><th scope="col">Sim time</th><th scope="col">Cache hit median (ms)</th><th scope="col">Cache hits</th><th scope="col">Upstream median (ms)</th><th scope="col">Upstream calls</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <section class="d-panel" aria-labelledby="tok-title">
+            <div class="d-head"><h2 id="tok-title">Tokens saved by cache hits</h2><span class="d-tag">simulated</span></div>
+            <p class="d-sub">Tokens per second, averaged over each 5-second interval, by simulation time. Follows the repeat-prompt ratio and request rate set above.</p>
+            <div class="d-plot" id="tok-plot" tabindex="0" role="img" aria-labelledby="tok-title" aria-describedby="tok-sum d-keys">
+              <svg aria-hidden="true"></svg>
+              <div class="d-tip" hidden></div>
+            </div>
+            <p class="d-sum" id="tok-sum"></p>
+            <details class="d-tv" id="tok-table">
+              <summary>View as table</summary>
+              <div class="d-scroll" tabindex="0" role="region" aria-label="Tokens saved by interval, table view">
+                <table class="d-table">
+                  <caption class="sr-only">Simulated tokens saved per 5-second interval</caption>
+                  <thead><tr><th scope="col">Sim time</th><th scope="col">Tokens saved per second</th><th scope="col">Tokens saved</th><th scope="col">Cache hits</th><th scope="col">Requests</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+        </div>
+        <p id="d-keys" class="sr-only">With the chart focused, the left and right arrow keys move a highlight between intervals. The same values are in the table view below the chart.</p>
+
+        <section class="d-panel" aria-labelledby="log-title">
+          <div class="d-head"><h2 id="log-title">Request log</h2><span class="d-tag">simulated</span></div>
+          <p class="d-sub">Synthetic rows for tenant <span class="d-mono">demo-tenant</span>, newest first, most recent 50. No prompt or response text appears because the gateway never logs bodies.</p>
+          <div class="d-scroll d-log" tabindex="0" role="region" aria-labelledby="log-title">
+            <table class="d-table">
+              <caption class="sr-only">Simulated request log for tenant demo-tenant, newest first, most recent 50 rows</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Sim time</th><th scope="col">Request id</th><th scope="col">Route</th><th scope="col">Model</th><th scope="col">Status</th><th scope="col">Cache</th>
+                  <th scope="col" class="d-num">Latency (ms)</th><th scope="col" class="d-num">Tokens</th><th scope="col">Masked</th><th scope="col" class="d-num">Retries</th><th scope="col">Stream</th>
+                </tr>
+              </thead>
+              <tbody id="log-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="mt-14 max-w-4xl" aria-labelledby="how-title">
+        <h2 id="how-title" class="text-2xl font-bold tracking-tight text-white">How this simulation works</h2>
+        <p class="mt-3 leading-relaxed text-zinc-400">A few lines of JavaScript in this page play the part of a client workload and of the gateway core v0.1. Nothing is fetched and nothing is stored. Every rate and duration below is an illustrative choice, not a measurement.</p>
+        <dl class="d-how">
+          <div><dt>Clock and workload</dt><dd>One tick per second creates the chosen number of synthetic requests. With the probability set by the repeat-prompt ratio, a request is an exact copy of one of the 200 most recent distinct request bodies; otherwise it is a new body for one of four example models. 15% of new bodies set <code>"stream": true</code>. On load and on reset the first two minutes are computed at once so the charts start full. The clock stops while paused or while the tab is hidden.</dd></div>
+          <div><dt>Caching</dt><dd>With <code>X-Revl-Cache: exact</code>, a non-streaming request whose body already has a stored 200 response (default TTL, 3600 seconds) is a <code>HIT</code>. Otherwise it is a <code>MISS</code>, and the response is stored if its status is 200. Streamed requests, and every request while caching is off, are <code>BYPASS</code>.</dd></div>
+          <div><dt>Latency</dt><dd>A hit takes 12 to 45 ms. An upstream call takes 15 ms plus a sample from a skewed (log-normal) distribution with a 900 ms median, limited to 150 to 8,000 ms.</dd></div>
+          <div><dt>Retries</dt><dd>Every request sends <code>X-Revl-Retries: 2</code>. Each upstream attempt has a 3% chance of returning 503, which costs 150 to 400 ms and is retried. If the last attempt also fails, the 503 is returned unchanged.</dd></div>
+          <div><dt>Masking</dt><dd>With <code>X-Revl-Mask: pii,secrets</code>, 35% of bodies contain one to three values a detector would match. The Masked column shows the count and the placeholders, such as <code>&lt;EMAIL_1&gt;</code>, that replace them, and the cache key is computed over the masked body. Streamed requests are sent without masking, because v0.1 rejects that combination with <code>400 revl_mask_stream_unsupported</code>.</dd></div>
+          <div><dt>Tokens and cost</dt><dd>Each body has a fixed token count, prompt plus completion, between 300 and 3,000. Tokens saved is the sum over <code>HIT</code> rows. Cost avoided multiplies it by a flat $5.00 per million tokens, which is not any provider's price.</dd></div>
+          <div><dt>Left out</dt><dd>Gateway keys and rate limiting are not simulated. The core's default limit is 60 requests per 60 seconds per tenant, which this workload would exceed above one request per second. Roadmap items such as semantic caching and cross-provider fallback are not built, so they are not shown.</dd></div>
+          <div><dt>Log columns</dt><dd>The gateway's own log line holds <code>request_id</code>, <code>tenant</code>, <code>route</code>, <code>model</code>, <code>status</code>, <code>cache</code>, <code>upstream_ms</code>, <code>masked</code>, <code>retries</code> and <code>stream</code>. Token counts, placeholder names and total latency are added here for illustration.</dd></div>
+        </dl>
+        <p class="mt-8 leading-relaxed text-zinc-400">To see the real behaviour, read the <a href="docs.html" class="font-medium text-brand-300 underline decoration-brand-300/40 underline-offset-4 transition hover:text-white">documentation</a> or <a href="index.html#waitlist" class="font-medium text-brand-300 underline decoration-brand-300/40 underline-offset-4 transition hover:text-white">join the waitlist</a> for the hosted gateway.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-zinc-900 bg-zinc-950">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+        <div>
+          <a href="index.html" class="flex items-center gap-2.5">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-extrabold text-white">R</span>
+            <span class="text-lg font-bold tracking-tight text-white">Revl <span class="text-brand-400">AI</span></span>
+          </a>
+          <p class="mt-3 text-sm text-zinc-500">Founder: <a href="https://www.linkedin.com/in/luat-nguyen-2bb064443/" target="_blank" rel="noopener noreferrer" class="text-zinc-300 transition hover:text-white">Luat Nguyen</a></p>
+          <p class="mt-1 text-sm text-zinc-500">Support: <a href="mailto:founder@proxyrevlvay.com" class="text-zinc-300 transition hover:text-white">founder@proxyrevlvay.com</a></p>
+        </div>
+        <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500">
+          <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
+          <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
+          <li><a href="about.html" class="transition hover:text-white">About</a></li>
+          <!--GITHUB_FOOTER-->
+          <li><a href="privacy.html" class="transition hover:text-white">Privacy Policy</a></li>
+          <li><a href="terms.html" class="transition hover:text-white">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="mt-8 border-t border-zinc-900 pt-6 text-sm text-zinc-500">
+        <p>Copyright &copy; 2026 Revl AI. All rights reserved.</p>
+        <p class="mt-2 max-w-3xl text-xs leading-relaxed text-zinc-600">Revl AI is an independent project. It is not affiliated with, endorsed by or sponsored by Anthropic or OpenAI. Claude is a trademark of Anthropic, PBC. OpenAI and GPT are trademarks of OpenAI. You use each model provider under your own account and that provider's terms.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('nav-toggle');
+      var menu = document.getElementById('mobile-menu');
+      if (!toggle || !menu) return;
+      var iconMenu = document.getElementById('icon-menu');
+      var iconClose = document.getElementById('icon-close');
+      toggle.addEventListener('click', function () {
+        var open = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !open);
+        iconMenu.classList.toggle('hidden', open);
+        iconClose.classList.toggle('hidden', !open);
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+    })();
+  </script>
+  <!-- PAGE-SPECIFIC SCRIPT GOES BELOW THIS LINE -->
+  <script id="demo-script">
+    (function () {
+      'use strict';
+
+      /* SIM-CORE-START: pure simulation logic. No DOM, no network, no storage. */
+      var CFG = {
+        TICK_MS: 1000,          // one simulated second per real second
+        BUCKET_S: 5,            // chart interval, seconds
+        BUCKETS: 24,            // charted window: 24 intervals = 2 minutes
+        LOG_ROWS: 50,
+        POOL: 200,              // distinct request bodies the workload can repeat
+        TTL_S: 3600,            // default X-Revl-Cache-TTL
+        RETRIES: 2,             // X-Revl-Retries sent with every simulated request
+        P_STREAM: 0.15,         // share of new bodies with "stream": true
+        P_SENSITIVE: 0.35,      // share of new bodies holding maskable values
+        P_FAIL: 0.03,           // chance that one upstream attempt returns 503
+        HIT_MS: [12, 45],
+        FAIL_MS: [150, 400],
+        OVERHEAD_MS: 15,
+        UP_MEDIAN_MS: 900, UP_SIGMA: 0.5, UP_CLAMP_MS: [150, 8000],
+        TOKENS: [300, 3000],
+        USD_PER_MTOK: 5,        // illustrative flat price, not a provider price
+        RPS_MAX: 10,
+        DEFAULTS: { caching: true, masking: false, repeat: 0.4, rps: 2 }
+      };
+      var MODELS = [
+        { model: 'claude-opus-5-5', route: '/v1/messages' },
+        { model: 'claude-sonnet-5-5', route: '/v1/messages' },
+        { model: 'claude-haiku-5-5', route: '/v1/messages' },
+        { model: 'gpt-4o', route: '/v1/chat/completions' }
+      ];
+      var KINDS = ['EMAIL', 'PHONE', 'CARD', 'IP', 'SECRET'];
+      var NONE = [];
+
+      function byNumber(a, b) { return a - b; }
+      function percentile(sorted, p) {   // nearest rank
+        if (!sorted.length) return null;
+        return sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(p * sorted.length) - 1))];
+      }
+
+      function createSim(seed) {
+        var s, opts, ticks, seq, pool, poolAt, rows, changedAt;
+
+        function rnd() {   // mulberry32
+          s = (s + 0x6D2B79F5) >>> 0;
+          var t = s;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        }
+        function gauss() { return Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd()); }
+        function between(r) { return r[0] + (r[1] - r[0]) * rnd(); }
+
+        function reset(newSeed) {
+          s = newSeed >>> 0;
+          opts = { caching: CFG.DEFAULTS.caching, masking: CFG.DEFAULTS.masking, repeat: CFG.DEFAULTS.repeat, rps: CFG.DEFAULTS.rps };
+          ticks = 0; seq = 0; pool = []; poolAt = 0; rows = []; changedAt = 0;
+        }
+
+        function set(next) {
+          var n = {
+            caching: !!next.caching,
+            masking: !!next.masking,
+            repeat: Math.min(0.95, Math.max(0, +next.repeat || 0)),
+            rps: Math.min(CFG.RPS_MAX, Math.max(1, Math.round(+next.rps || 1)))
+          };
+          if (n.caching !== opts.caching || n.masking !== opts.masking || n.repeat !== opts.repeat || n.rps !== opts.rps) changedAt = ticks;
+          opts = n;
+        }
+
+        function newBody() {
+          var m = MODELS[Math.floor(rnd() * MODELS.length)], placeholders = [], counts = {}, n, kind;
+          if (rnd() < CFG.P_SENSITIVE) {
+            for (n = 1 + Math.floor(rnd() * 3); n > 0; n--) {
+              kind = KINDS[Math.floor(rnd() * KINDS.length)];
+              counts[kind] = (counts[kind] || 0) + 1;
+              placeholders.push('<' + kind + '_' + counts[kind] + '>');
+            }
+          }
+          var body = {
+            model: m.model, route: m.route,
+            stream: rnd() < CFG.P_STREAM,
+            tokens: Math.round(CFG.TOKENS[0] + (CFG.TOKENS[1] - CFG.TOKENS[0]) * Math.pow(rnd(), 2)),
+            placeholders: placeholders,
+            storedAt: [-1, -1]   // tick a 200 response was cached: [raw body, masked body]
+          };
+          if (pool.length < CFG.POOL) pool.push(body);
+          else { pool[poolAt] = body; poolAt = (poolAt + 1) % CFG.POOL; }
+          return body;
+        }
+
+        function request(t) {
+          var body = pool.length && rnd() < opts.repeat ? pool[Math.floor(rnd() * pool.length)] : newBody();
+          var masked = opts.masking && !body.stream ? body.placeholders.length : 0;
+          var key = masked ? 1 : 0;   // masking changes the body, so it changes the cache key
+          var lookup = opts.caching && !body.stream;
+          var cache, status = 200, retries = 0, ms, up;
+          if (lookup && body.storedAt[key] >= 0 && t - body.storedAt[key] < CFG.TTL_S) {
+            cache = 'HIT';
+            ms = between(CFG.HIT_MS);
+          } else {
+            cache = lookup ? 'MISS' : 'BYPASS';
+            ms = CFG.OVERHEAD_MS;
+            for (;;) {
+              if (rnd() >= CFG.P_FAIL) {
+                up = CFG.UP_MEDIAN_MS * Math.exp(CFG.UP_SIGMA * gauss());
+                ms += Math.min(CFG.UP_CLAMP_MS[1], Math.max(CFG.UP_CLAMP_MS[0], up));
+                status = 200;
+                break;
+              }
+              status = 503;
+              ms += between(CFG.FAIL_MS);
+              if (retries >= CFG.RETRIES) break;
+              retries++;
+            }
+            if (lookup && status === 200) body.storedAt[key] = t;
+          }
+          var id = String(++seq);
+          while (id.length < 6) id = '0' + id;
+          return {
+            id: 'sim_' + id, t: t, route: body.route, model: body.model, status: status, cache: cache,
+            ms: Math.round(ms), tokens: status === 200 ? body.tokens : 0,
+            masked: masked, placeholders: masked ? body.placeholders : NONE, retries: retries, stream: body.stream
+          };
+        }
+
+        function windowStart() {   // first second of the oldest charted interval
+          var current = Math.floor(Math.max(ticks - 1, 0) / CFG.BUCKET_S);
+          return Math.max(0, (current - CFG.BUCKETS + 1) * CFG.BUCKET_S);
+        }
+
+        function tick() {
+          var out = [], i, drop = 0, start;
+          for (i = 0; i < opts.rps; i++) out.push(request(ticks));
+          ticks++;
+          for (i = 0; i < out.length; i++) rows.push(out[i]);
+          start = windowStart();
+          while (drop < rows.length && rows[drop].t < start) drop++;
+          if (drop) rows.splice(0, drop);
+          return out;
+        }
+
+        function kpis() {
+          var start = windowStart(), from = Math.max(start, changedAt), lat = [], hits = 0, saved = 0, i, r;
+          for (i = 0; i < rows.length; i++) {
+            r = rows[i];
+            if (r.t < from) continue;
+            lat.push(r.ms);
+            if (r.cache === 'HIT') { hits++; saved += r.tokens; }
+          }
+          lat.sort(byNumber);
+          return {
+            seconds: ticks - from, sinceChange: changedAt > start,
+            requests: lat.length, hits: hits, hitRate: lat.length ? hits / lat.length : null,
+            tokensSaved: saved, costAvoided: saved / 1e6 * CFG.USD_PER_MTOK,
+            p50: percentile(lat, 0.5), p95: percentile(lat, 0.95)
+          };
+        }
+
+        function series() {
+          var start = windowStart(), S = CFG.BUCKET_S, buckets = [], allHit = [], allUp = [], saved = 0, i, r, b;
+          for (i = 0; i < CFG.BUCKETS; i++) {
+            buckets.push({
+              from: start + i * S, to: start + (i + 1) * S,
+              seconds: Math.max(0, Math.min(S, ticks - (start + i * S))),
+              requests: 0, hits: 0, saved: 0, hitMs: [], upMs: []
+            });
+          }
+          for (i = 0; i < rows.length; i++) {
+            r = rows[i];
+            b = buckets[Math.floor((r.t - start) / S)];
+            if (!b) continue;
+            b.requests++;
+            if (r.cache === 'HIT') { b.hits++; b.saved += r.tokens; b.hitMs.push(r.ms); allHit.push(r.ms); saved += r.tokens; }
+            else { b.upMs.push(r.ms); allUp.push(r.ms); }
+          }
+          for (i = 0; i < buckets.length; i++) {
+            b = buckets[i];
+            b.hitP50 = percentile(b.hitMs.sort(byNumber), 0.5);
+            b.upP50 = percentile(b.upMs.sort(byNumber), 0.5);
+            b.savedPerSec = b.seconds ? b.saved / b.seconds : null;
+            delete b.hitMs; delete b.upMs;
+          }
+          return {
+            start: start, end: start + CFG.BUCKETS * S, changedAt: changedAt, buckets: buckets,
+            total: {
+              seconds: ticks - start, requests: allHit.length + allUp.length, hits: allHit.length, saved: saved,
+              hitP50: percentile(allHit.sort(byNumber), 0.5), upP50: percentile(allUp.sort(byNumber), 0.5)
+            }
+          };
+        }
+
+        reset(seed);
+        return {
+          reset: reset, set: set, tick: tick, kpis: kpis, series: series,
+          rows: function () { return rows; },
+          ticks: function () { return ticks; },
+          poolSize: function () { return pool.length; }
+        };
+      }
+      /* SIM-CORE-END */
+
+      /* ---------- Rendering. Reads the simulation, writes the DOM. ---------- */
+      var $ = function (id) { return document.getElementById(id); };
+      var NS = 'http://www.w3.org/2000/svg';
+
+      function int(n) { return Math.round(n).toLocaleString('en-US'); }
+      function compact(n) { return n < 1000 ? String(Math.round(n)) : n < 1e6 ? (n / 1e3).toFixed(1) + 'K' : (n / 1e6).toFixed(2) + 'M'; }
+      function axisK(v) { return v >= 1000 ? +(v / 1000).toFixed(2) + 'K' : String(+v.toFixed(1)); }
+      function usd(v) { return v > 0 && v < 0.01 ? '<$0.01' : '$' + v.toFixed(2); }
+      function pct(x) { return (x > 0 && x < 0.1 ? (x * 100).toFixed(1) : Math.round(x * 100)) + '%'; }
+      function ms(v) { return v == null ? 'none' : int(v) + ' ms'; }
+      function plural(n, word) { return int(n) + ' ' + word + (n === 1 ? '' : 's'); }
+      function clock(t) {
+        var h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+        return (h ? h + ':' + (m < 10 ? '0' : '') : '') + m + ':' + (s < 10 ? '0' : '') + s;
+      }
+      function span(b) { return clock(b.from) + ' to ' + clock(b.to); }
+      function niceMax(v) {   // four equal steps of a round size
+        var raw = v / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+        return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p * 4;
+      }
+      function svgEl(name, cls, parent) {
+        var e = document.createElementNS(NS, name);
+        if (cls) e.setAttribute('class', cls);
+        parent.appendChild(e);
+        return e;
+      }
+      function attrs(e, a) { for (var k in a) e.setAttribute(k, a[k]); }
+      function show(e, on) { e.style.display = on ? '' : 'none'; }
+      function f1(n) { return n.toFixed(1); }
+      function tipRow(parent, keyCls, value, text) {
+        var row = document.createElement('div'), key, b = document.createElement('b');
+        if (keyCls) { key = document.createElement('i'); key.className = 'd-key ' + keyCls; row.appendChild(key); }
+        b.textContent = value;
+        row.appendChild(b);
+        row.appendChild(document.createTextNode(' ' + text));
+        parent.appendChild(row);
+      }
+
+      /* One chart: fixed set of SVG nodes created once, attributes updated per tick. */
+      function makeChart(id, o) {
+        var root = $(id + '-plot'), svg = root.querySelector('svg'), tip = root.querySelector('.d-tip');
+        var sum = $(id + '-sum'), det = $(id + '-table'), tbody = det.querySelector('tbody');
+        var N = CFG.BUCKETS, H = 220, W = root.clientWidth || 640, yMax = 0, hover = -1, hot = -1, data = null, geo = null, i;
+        var grid = [], yl = [], xl = [], bars = [], lines = [];
+
+        for (i = 0; i < 5; i++) grid.push(svgEl('line', i ? 'd-grid' : 'd-axis', svg));
+        for (i = 0; i < 5; i++) { yl.push(svgEl('text', 'd-yl', svg)); xl.push(svgEl('text', 'd-xl', svg)); }
+        var yu = svgEl('text', 'd-yu', svg), xt = svgEl('text', 'd-xt', svg);   // axis unit and axis title
+        yu.textContent = o.unit;
+        xt.textContent = 'Simulation time (min:sec)';
+        if (o.bar) for (i = 0; i < N; i++) bars.push(svgEl('path', 'd-bar', svg));
+        (o.lines || []).forEach(function (s) { lines.push({ s: s, path: svgEl('path', 'd-line ' + s.cls, svg) }); });
+        var mark = svgEl('line', 'd-mark', svg), markT = svgEl('text', 'd-markt', svg);
+        markT.textContent = 'settings changed';
+        var cross = svgEl('line', 'd-cross', svg);
+        lines.forEach(function (l) {
+          l.end = svgEl('circle', 'd-dot ' + l.s.cls, svg);
+          l.hov = svgEl('circle', 'd-dot ' + l.s.cls, svg);
+          l.label = svgEl('text', '', svg);
+          l.val = svgEl('tspan', 'd-val', l.label);
+          l.name = svgEl('tspan', '', l.label);
+          l.name.setAttribute('dx', '5');
+        });
+
+        function draw() {
+          if (!data) return;
+          var B = data.buckets, secs = data.end - data.start, wide = W >= 480;
+          var mL = 46, mR = lines.length ? (wide ? 112 : 60) : 20, mT = 22, mB = 42;
+          var pw = Math.max(W - mL - mR, 80), ph = H - mT - mB, base = mT + ph, band = pw / N, need = 0, k, gy;
+          B.forEach(function (b) { o.values(b).forEach(function (v) { if (v > need) need = v; }); });
+          if (need > yMax || need < yMax * 0.4) yMax = niceMax(Math.max(need * 1.05, o.floor));
+          function X(n) { return mL + band * (n + 0.5); }
+          function Y(v) { return base - ph * v / yMax; }
+          geo = { X: X, Y: Y, mL: mL, mT: mT, base: base, band: band };
+          attrs(yu, { x: 0, y: 10 });
+          attrs(xt, { x: f1(mL + pw / 2), y: base + 34 });
+
+          for (k = 0; k < 5; k++) {
+            gy = Math.round(base - ph * k / 4) + 0.5;
+            attrs(grid[k], { x1: mL, x2: mL + pw, y1: gy, y2: gy });
+            attrs(yl[k], { x: mL - 8, y: gy + 3.5 });
+            yl[k].textContent = o.tick(yMax * k / 4);
+          }
+          var step = pw < 250 ? 60 : 30, t = Math.ceil(data.start / step) * step;
+          for (k = 0; k < xl.length; k++, t += step) {
+            show(xl[k], t <= data.end);
+            if (t > data.end) continue;
+            attrs(xl[k], { x: f1(mL + (t - data.start) / secs * pw), y: base + 17 });
+            xl[k].textContent = clock(t);
+          }
+
+          var c = data.changedAt, marked = c > data.start && c <= data.end;
+          var mx = Math.round(mL + (c - data.start) / secs * pw) + 0.5, flip = mx > mL + pw * 0.55;
+          show(mark, marked); show(markT, marked);
+          if (marked) {
+            attrs(mark, { x1: mx, x2: mx, y1: mT - 6, y2: base });
+            attrs(markT, { x: flip ? mx - 5 : Math.max(mx + 5, mL + 14), y: 12, 'text-anchor': flip ? 'end' : 'start' });   // stays clear of the unit label
+          }
+
+          bars.forEach(function (p, n) {
+            var v = o.bar(B[n]);
+            show(p, v > 0);
+            if (!(v > 0)) return;
+            var bw = Math.min(24, Math.max(band - 2, 1)), h = Math.max(ph * v / yMax, 1), r = Math.min(4, bw / 2, h);
+            var x0 = X(n) - bw / 2, x1 = x0 + bw, y0 = base - h;
+            p.setAttribute('d', 'M' + f1(x0) + ' ' + base + 'V' + f1(y0 + r) + 'Q' + f1(x0) + ' ' + f1(y0) + ' ' + f1(x0 + r) + ' ' + f1(y0) +
+              'H' + f1(x1 - r) + 'Q' + f1(x1) + ' ' + f1(y0) + ' ' + f1(x1) + ' ' + f1(y0 + r) + 'V' + base + 'Z');
+          });
+
+          var ends = [];
+          lines.forEach(function (l) {
+            var d = '', pen = false, last = -1, n, v;
+            for (n = 0; n < N; n++) {
+              v = l.s.get(B[n]);
+              if (v == null) { pen = false; continue; }
+              d += (pen ? 'L' : 'M') + f1(X(n)) + ' ' + f1(Y(v));
+              if (!pen && (n === N - 1 || l.s.get(B[n + 1]) == null)) d += 'h0.01';   // lone point still draws
+              pen = true; last = n;
+            }
+            l.path.setAttribute('d', d);
+            show(l.end, last >= 0); show(l.label, last >= 0);
+            if (last < 0) return;
+            v = l.s.get(B[last]);
+            attrs(l.end, { cx: f1(X(last)), cy: f1(Y(v)), r: 5 });
+            l.val.textContent = ms(v);
+            l.name.textContent = wide ? l.s.name : '';
+            ends.push({ l: l, x: X(last) + 10, y: Math.min(Y(v), base - 7) });
+          });
+          if (ends.length === 2 && Math.abs(ends[0].y - ends[1].y) < 13) {   // keep end labels apart
+            if (ends[0].y <= ends[1].y) ends[0].y = ends[1].y - 13; else ends[1].y = ends[0].y - 13;
+          }
+          ends.forEach(function (e) { attrs(e.l.label, { x: f1(e.x), y: f1(e.y + 4) }); });
+        }
+
+        function drawHover() {
+          var on = hover >= 0 && !!geo && !!data;
+          show(cross, on);
+          tip.hidden = !on;
+          lines.forEach(function (l) { show(l.hov, false); });
+          if (hot !== hover && bars.length) {
+            if (hot >= 0) bars[hot].setAttribute('class', 'd-bar');
+            if (hover >= 0) bars[hover].setAttribute('class', 'd-bar d-on');
+            hot = hover;
+          }
+          if (!on) return;
+          var b = data.buckets[hover], cx = Math.round(geo.X(hover)) + 0.5, head = document.createElement('div');
+          attrs(cross, { x1: cx, x2: cx, y1: geo.mT, y2: geo.base });
+          lines.forEach(function (l) {
+            var v = l.s.get(b);
+            if (v == null) return;
+            show(l.hov, true);
+            attrs(l.hov, { cx: f1(geo.X(hover)), cy: f1(geo.Y(v)), r: 5 });
+          });
+          tip.textContent = '';
+          head.textContent = 'Sim time ' + span(b);
+          tip.appendChild(head);
+          o.tip(b, tip);
+          var tw = tip.offsetWidth, left = cx + 12;
+          if (left + tw > W) left = cx - 12 - tw;
+          tip.style.left = Math.max(0, left) + 'px';
+        }
+
+        function drawTable() {
+          if (!det.open || !data) return;
+          tbody.textContent = '';
+          data.buckets.forEach(function (b) {
+            var tr = document.createElement('tr');
+            o.row(b).forEach(function (text, n) {
+              var cell = document.createElement(n ? 'td' : 'th');
+              if (!n) cell.scope = 'row';
+              cell.textContent = text;
+              tr.appendChild(cell);
+            });
+            tbody.appendChild(tr);
+          });
+        }
+
+        function setHover(n) { if (n !== hover) { hover = n; drawHover(); } }
+        function at(e) {
+          var left = svg.getBoundingClientRect().left;
+          return Math.max(0, Math.min(N - 1, Math.floor((e.clientX - left - geo.mL) / geo.band)));
+        }
+        function resize() {
+          var w = root.clientWidth;
+          if (w && Math.abs(w - W) >= 1) { W = w; draw(); drawHover(); }
+        }
+        root.addEventListener('pointermove', function (e) { if (geo) setHover(at(e)); });
+        root.addEventListener('pointerdown', function (e) { if (geo) setHover(at(e)); });
+        root.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch') setHover(-1); });
+        root.addEventListener('focus', function () { if (hover < 0) setHover(N - 1); });
+        root.addEventListener('blur', function () { setHover(-1); });
+        root.addEventListener('keydown', function (e) {
+          var n = hover < 0 ? N - 1 : hover;
+          if (e.key === 'ArrowLeft') n--;
+          else if (e.key === 'ArrowRight') n++;
+          else if (e.key === 'Home') n = 0;
+          else if (e.key === 'End') n = N - 1;
+          else if (e.key === 'Escape') { setHover(-1); return; }
+          else return;
+          e.preventDefault();
+          setHover(Math.max(0, Math.min(N - 1, n)));
+        });
+        det.addEventListener('toggle', drawTable);
+        if (window.ResizeObserver) new ResizeObserver(resize).observe(root);
+        else window.addEventListener('resize', resize);
+
+        return function update(d, fresh) {
+          if (fresh) yMax = 0;   // reset: let the scale fit the new data from scratch
+          data = d;
+          draw(); drawHover(); drawTable();
+          sum.textContent = o.summary(d.total);
+        };
+      }
+
+      var drawLatency = makeChart('lat', {
+        floor: 200, tick: int, unit: 'ms',
+        lines: [
+          { cls: 'd-s2', name: 'upstream', get: function (b) { return b.upP50; } },
+          { cls: 'd-s1', name: 'cache hit', get: function (b) { return b.hitP50; } }
+        ],
+        values: function (b) { return [b.upP50, b.hitP50]; },
+        tip: function (b, el) {
+          tipRow(el, 'd-k2', ms(b.upP50), 'upstream median, ' + plural(b.requests - b.hits, 'call'));
+          tipRow(el, 'd-k1', ms(b.hitP50), 'cache hit median, ' + plural(b.hits, 'hit'));
+        },
+        row: function (b) {
+          return [span(b), b.hitP50 == null ? '–' : int(b.hitP50), String(b.hits), b.upP50 == null ? '–' : int(b.upP50), String(b.requests - b.hits)];
+        },
+        summary: function (t) {
+          var up = t.requests - t.hits;
+          return 'Simulated, charted window: ' +
+            (t.hits ? 'cache hits had a median of ' + ms(t.hitP50) + ' over ' + plural(t.hits, 'request') : 'no cache hits') + '; ' +
+            (up ? 'upstream calls had a median of ' + ms(t.upP50) + ' over ' + plural(up, 'request') : 'no upstream calls') + '.';
+        }
+      });
+
+      var drawTokens = makeChart('tok', {
+        floor: 400, tick: axisK, unit: 'tokens/s',
+        bar: function (b) { return b.savedPerSec; },
+        values: function (b) { return [b.savedPerSec]; },
+        tip: function (b, el) {
+          tipRow(el, 'd-k1 d-kbar', compact(b.savedPerSec || 0) + ' tokens/s', 'saved');
+          tipRow(el, '', int(b.hits) + ' of ' + int(b.requests), 'requests were cache hits');
+        },
+        row: function (b) {
+          return [span(b), b.seconds ? int(b.savedPerSec) : '–', int(b.saved), String(b.hits), String(b.requests)];
+        },
+        summary: function (t) {
+          return 'Simulated, charted window: ' + compact(t.saved) + ' tokens saved by ' + plural(t.hits, 'cache hit') +
+            ', an average of ' + compact(t.seconds ? t.saved / t.seconds : 0) + ' tokens per second.';
+        }
+      });
+
+      function drawKpis(k) {
+        var none = k.requests === 0;
+        $('k-req').textContent = int(k.requests);
+        $('k-hit').textContent = none ? '–' : pct(k.hitRate);
+        $('k-tok').textContent = compact(k.tokensSaved);
+        $('k-usd').textContent = usd(k.costAvoided);
+        $('k-p50').textContent = none ? '–' : ms(k.p50);
+        $('k-p95').textContent = none ? '–' : ms(k.p95);
+        $('k-win').textContent = 'Window: the last ' + plural(k.seconds, 'second') + ' of simulated traffic' +
+          (k.sinceChange ? ', restarted when you last changed a control (marked on the charts).' : ', the same span as the charts.');
+      }
+
+      /* Request log: prepend new rows, drop the oldest beyond LOG_ROWS. */
+      var logBody = $('log-body');
+      function cell(tr, text, cls) {
+        var td = document.createElement('td');
+        if (cls) td.className = cls;
+        td.textContent = text;
+        tr.appendChild(td);
+        return td;
+      }
+      function logRow(r, flash) {
+        var tr = document.createElement('tr'), c, dot, list;
+        if (flash) tr.className = 'd-new';
+        cell(tr, clock(r.t));
+        cell(tr, r.id, 'd-dim');
+        cell(tr, r.route);
+        cell(tr, r.model);
+        c = cell(tr, String(r.status));
+        if (r.status !== 200) { c.className = 'd-err'; c.title = 'Upstream error returned unchanged after ' + r.retries + ' retries'; }
+        c = cell(tr, '');
+        dot = document.createElement('i');
+        dot.className = 'd-st ' + (r.cache === 'HIT' ? 'd-hit' : r.cache === 'MISS' ? 'd-miss' : 'd-byp');
+        c.appendChild(dot);
+        c.appendChild(document.createTextNode(r.cache));
+        cell(tr, int(r.ms), 'd-num');
+        cell(tr, int(r.tokens), 'd-num');
+        c = cell(tr, String(r.masked));
+        if (r.masked) {
+          list = document.createElement('span');
+          list.className = 'd-dim';
+          list.textContent = ' ' + r.placeholders.join(' ');
+          c.appendChild(list);
+        }
+        cell(tr, String(r.retries), 'd-num');
+        cell(tr, r.stream ? 'yes' : 'no');
+        return tr;
+      }
+      function addRows(list, flash) {
+        var frag = document.createDocumentFragment(), i;
+        for (i = list.length - 1; i >= 0; i--) frag.appendChild(logRow(list[i], flash));
+        logBody.insertBefore(frag, logBody.firstChild);
+        while (logBody.rows.length > CFG.LOG_ROWS) logBody.deleteRow(-1);
+      }
+
+      /* ---------- Wiring ---------- */
+      var sim = createSim(1);
+      var cCache = $('c-cache'), cMask = $('c-mask'), cRepeat = $('c-repeat'), cRps = $('c-rps');
+      var bPause = $('b-pause'), statusEl = $('d-status');
+      var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      var paused = reduce, timer = 0;
+      var why = reduce ? 'Paused because your system asks for reduced motion. Press Resume to run.' : '';
+
+      function render(newRows, fresh) {
+        var s = sim.series();
+        drawKpis(sim.kpis());
+        drawLatency(s, fresh);
+        drawTokens(s, fresh);
+        if (newRows) addRows(newRows, true);
+        $('d-clock').textContent = clock(sim.ticks());
+      }
+      function step() { render(sim.tick()); }
+
+      function labels() {
+        $('h-cache').textContent = cCache.checked ? 'exact' : 'off';
+        $('h-mask').textContent = cMask.checked ? 'pii,secrets' : 'off';
+        $('o-repeat').textContent = cRepeat.value + '%';
+        cRepeat.setAttribute('aria-valuetext', cRepeat.value + ' percent');
+        $('o-rps').textContent = cRps.value;
+        $('k-set').textContent = 'Settings in effect: caching ' + (cCache.checked ? 'exact' : 'off') + ', masking ' + (cMask.checked ? 'pii,secrets' : 'off') +
+          ', repeat-prompt ratio ' + cRepeat.value + '%, ' + plural(+cRps.value, 'request') + ' per second.';
+      }
+      function changed() {   // the controls are the source of truth for the simulation options
+        sim.set({ caching: cCache.checked, masking: cMask.checked, repeat: cRepeat.value / 100, rps: +cRps.value });
+        labels();
+        render(null);
+      }
+      function sync() {   // run only while visible and not paused
+        var run = !paused && !document.hidden;
+        if (run && !timer) timer = setInterval(step, CFG.TICK_MS);
+        if (!run && timer) { clearInterval(timer); timer = 0; }
+        bPause.textContent = paused ? 'Resume' : 'Pause';
+        statusEl.textContent = paused ? (why || 'Paused.') : 'Running.';
+      }
+      function boot() {   // fresh seed, default controls, first two minutes computed at once
+        var i;
+        sim.reset((Date.now() ^ Math.floor(Math.random() * 4294967296)) >>> 0);
+        cCache.checked = CFG.DEFAULTS.caching;
+        cMask.checked = CFG.DEFAULTS.masking;
+        cRepeat.value = Math.round(CFG.DEFAULTS.repeat * 100);
+        cRps.value = CFG.DEFAULTS.rps;
+        labels();
+        for (i = 0; i < CFG.BUCKETS * CFG.BUCKET_S; i++) sim.tick();
+        logBody.textContent = '';
+        addRows(sim.rows().slice(-CFG.LOG_ROWS), false);
+        render(null, true);
+      }
+      function headerHeight() {   // keeps the sticky notice just below the fixed header
+        var nav = document.querySelector('header nav');
+        if (nav && nav.offsetHeight) document.documentElement.style.setProperty('--hdr', (nav.offsetHeight + 1) + 'px');
+      }
+
+      cCache.addEventListener('change', changed);
+      cMask.addEventListener('change', changed);
+      cRepeat.addEventListener('input', changed);
+      cRps.addEventListener('input', changed);
+      bPause.addEventListener('click', function () { paused = !paused; why = ''; sync(); });
+      $('b-reset').addEventListener('click', boot);
+      document.addEventListener('visibilitychange', sync);
+      window.addEventListener('pageshow', changed);   // a browser may restore control state without firing change
+      window.addEventListener('resize', headerHeight);
+
+      headerHeight();
+      boot();
+      sync();
+    })();
+  </script>
+</body>
+</html>
