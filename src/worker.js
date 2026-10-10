@@ -13,12 +13,12 @@ const MAX_EMAIL_LENGTH = 254;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const SOURCES = new Set(['waitlist', 'api-keys']);
 
-// The pages use the Tailwind Play CDN and inline <script>/<style> blocks, which is
-// why 'unsafe-inline' is allowed for scripts and styles. Everything else is locked
-// to this origin plus the two font hosts.
+// The pages use inline <script>/<style> blocks, which is why 'unsafe-inline' is
+// allowed for scripts and styles. No third-party script is allowed. Everything
+// else is locked to this origin plus the two font hosts.
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com",
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data:",
@@ -179,6 +179,13 @@ function finalize(response, url) {
   const type = res.headers.get('Content-Type');
   if (type && type.trim().toLowerCase() === 'text/html') {
     res.headers.set('Content-Type', 'text/html; charset=utf-8');
+  }
+  if (type && type.trim().toLowerCase().startsWith('text/html')) {
+    // Pages are served exactly as authored. no-transform tells the CDN not to
+    // rewrite the HTML, which stops it injecting scripts such as an analytics beacon.
+    const cacheControl = res.headers.get('Cache-Control');
+    if (!cacheControl) res.headers.set('Cache-Control', 'no-transform');
+    else if (!/no-transform/i.test(cacheControl)) res.headers.set('Cache-Control', cacheControl + ', no-transform');
   }
   return res;
 }

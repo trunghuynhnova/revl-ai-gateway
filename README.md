@@ -175,6 +175,7 @@ stores its hash. See [`gateway/README.md`](gateway/README.md) for details.
 | `revl-ai/` | The static website served at proxyrevlvay.com |
 | `src/worker.js` | The website's Worker: waitlist endpoint, HTTPS redirect, security headers |
 | `schema.sql` | The waitlist table |
+| `tailwind.config.cjs`, `styles/` | Source for the site stylesheet at `revl-ai/assets/site.css` |
 
 ## Development
 
