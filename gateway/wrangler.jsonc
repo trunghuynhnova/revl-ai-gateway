@@ -1,0 +1,27 @@
+{
+  "name": "revl-gateway",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+
+  // Two KV namespaces: KEYS holds gateway key digests, CACHE holds cached responses.
+  // Create them once and paste the ids that each command prints:
+  //   npx wrangler kv namespace create KEYS
+  //   npx wrangler kv namespace create CACHE
+  "kv_namespaces": [
+    { "binding": "KEYS", "id": "REPLACE_WITH_KEYS_NAMESPACE_ID" },
+    { "binding": "CACHE", "id": "REPLACE_WITH_CACHE_NAMESPACE_ID" }
+  ],
+
+  // Per-tenant rate limit: 60 requests per 60 seconds. `period` must be 10 or 60.
+  // `namespace_id` is any positive integer, written as a string, that is unique
+  // in your account. Remove this block to turn rate limiting off.
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "2001", "simple": { "limit": 60, "period": 60 } }
+  ],
+
+  "vars": {
+    // "false" makes X-Revl-Key optional and puts every caller in one tenant
+    // named "public". Only for local development or single-tenant self-hosting.
+    "REQUIRE_GATEWAY_KEY": "true"
+  }
+}
