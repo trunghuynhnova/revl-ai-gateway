@@ -23,6 +23,8 @@ First public version of the open-source gateway core.
   scripts, and HTML is served with `no-transform` so nothing is injected in
   transit.
 - Gateway deployed at api.proxyrevlvay.com, invite-only.
+- Source published at https://github.com/trunghuynhnova/revl-ai-gateway.
+- www.proxyrevlvay.com redirects to proxyrevlvay.com.
 
 ## Website (2026-10-10)
 

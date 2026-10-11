@@ -34,6 +34,8 @@
   "workers_dev": false,
   "preview_urls": false,
   "routes": [
-    { "pattern": "proxyrevlvay.com", "custom_domain": true }
+    { "pattern": "proxyrevlvay.com", "custom_domain": true },
+    // The Worker redirects www to the bare domain.
+    { "pattern": "www.proxyrevlvay.com", "custom_domain": true }
   ]
 }

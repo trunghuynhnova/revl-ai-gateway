@@ -1,5 +1,6 @@
 # Revl AI
 
+[![test](https://github.com/trunghuynhnova/revl-ai-gateway/actions/workflows/test.yml/badge.svg)](https://github.com/trunghuynhnova/revl-ai-gateway/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Status: early access](https://img.shields.io/badge/status-early%20access-blue.svg)
 ![Runtime: Cloudflare Workers](https://img.shields.io/badge/runtime-Cloudflare%20Workers-orange.svg)
@@ -145,7 +146,8 @@ Set in [`gateway/wrangler.jsonc`](gateway/wrangler.jsonc):
 ## Self-hosting
 
 ```bash
-cd gateway
+git clone https://github.com/trunghuynhnova/revl-ai-gateway.git
+cd revl-ai-gateway/gateway
 npm install
 npx wrangler kv namespace create KEYS
 npx wrangler kv namespace create CACHE

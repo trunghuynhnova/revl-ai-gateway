@@ -38,8 +38,8 @@ and so on) returns `404 revl_not_found`.
 
 ## Self-hosting quick start
 
-You need Node.js 20 or later and a Cloudflare account. Run these in a checkout
-of this directory.
+You need Node.js 20 or later and a Cloudflare account. Run these in the `gateway`
+directory of a clone of https://github.com/trunghuynhnova/revl-ai-gateway.
 
 ```sh
 npm install

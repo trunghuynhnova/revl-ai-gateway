@@ -135,7 +135,7 @@
       </ul>
 
       <div class="hidden items-center gap-3 lg:flex">
-        <!--GITHUB_HEADER-->
+        <a href="https://github.com/trunghuynhnova/revl-ai-gateway" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition hover:text-white" aria-label="Revl AI gateway source on GitHub"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
         <a href="index.html#waitlist" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950">Get API Keys</a>
       </div>
 
@@ -153,6 +153,7 @@
         <li><a href="docs.html" class="text-white" aria-current="page">Docs</a></li>
         <li><a href="demo.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">Demo</a></li>
         <li><a href="about.html" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">About</a></li>
+        <li><a href="https://github.com/trunghuynhnova/revl-ai-gateway" target="_blank" rel="noopener noreferrer" class="block rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white">GitHub</a></li>
       </ul>
       <a href="index.html#waitlist" class="mt-4 block w-full rounded-lg bg-brand-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-500">Get API Keys</a>
     </div>
@@ -620,12 +621,14 @@ client = Anthropic(
 
           <section id="self-hosting" aria-labelledby="self-hosting-h">
             <h2 id="self-hosting-h">Self-hosting</h2>
-            <p>The core runs as a Cloudflare Worker with two KV namespaces. You need a Cloudflare account and Node.js. Get the gateway source
-<!--GITHUB_INLINE-->
-            and run the commands below from its root directory. The repository is being published. If you cannot find the link on this page yet, write to <a href="mailto:founder@proxyrevlvay.com">founder@proxyrevlvay.com</a>.</p>
+            <p>The core runs as a Cloudflare Worker with two KV namespaces. You need a Cloudflare account and Node.js. The source is <a href="https://github.com/trunghuynhnova/revl-ai-gateway" target="_blank" rel="noopener noreferrer">on GitHub</a>. The commands below clone it and deploy the <code>gateway</code> directory.</p>
             <div class="code">
               <div class="code-head"><span>Shell</span><button type="button" class="copy-btn" data-copy aria-label="Copy self-hosting commands">Copy</button></div>
-              <pre tabindex="0"><code data-sample="selfhost.sh"><span class="t-c"># 1. In the gateway source directory: install dependencies, sign in to Cloudflare</span>
+              <pre tabindex="0"><code data-sample="selfhost.sh"><span class="t-c"># 0. Get the source</span>
+git clone https://github.com/trunghuynhnova/revl-ai-gateway.git
+cd revl-ai-gateway/gateway
+
+<span class="t-c"># 1. Install dependencies, sign in to Cloudflare</span>
 npm install
 npx wrangler login
 
@@ -734,7 +737,7 @@ echo <span class="t-s">"$KEY"</span>   <span class="t-c"># send this as X-Revl-K
           <li><a href="docs.html" class="transition hover:text-white">Docs</a></li>
           <li><a href="demo.html" class="transition hover:text-white">Demo</a></li>
           <li><a href="about.html" class="transition hover:text-white">About</a></li>
-          <!--GITHUB_FOOTER-->
+          <li><a href="https://github.com/trunghuynhnova/revl-ai-gateway" target="_blank" rel="noopener noreferrer" class="transition hover:text-white">GitHub</a></li>
           <li><a href="privacy.html" class="transition hover:text-white">Privacy Policy</a></li>
           <li><a href="terms.html" class="transition hover:text-white">Terms of Service</a></li>
         </ul>
