@@ -39,7 +39,7 @@ Revl AI does not resell, sublicense, pool or share model-provider API access.
 | Gateway access keys | Available | Stored only as SHA-256 hashes |
 | Exact-match response cache | Available | Opt-in per request, isolated per tenant and per provider key |
 | PII and secret masking with rehydration | Available | Non-streaming requests, pattern based |
-| Retries with backoff | Available | Up to 3, on 429 and 5xx |
+| Retries with backoff | Available | Opt-in, up to 3, on 429, 500, 502, 503 and 504 |
 | Per-tenant rate limiting | Available | Workers rate limiting binding |
 | Streaming passthrough | Available | Not cached, not masked |
 | Semantic (embedding-based) caching | Roadmap | |
@@ -153,7 +153,7 @@ npx wrangler kv namespace create KEYS
 npx wrangler kv namespace create CACHE
 # put the two namespace ids into wrangler.jsonc, then:
 npx wrangler deploy
-node scripts/create-key.mjs "my first key"
+node scripts/create-key.mjs --id my-team --label "my first key"
 ```
 
 `create-key.mjs` prints a new gateway key once, together with the command that
@@ -195,7 +195,9 @@ Please report vulnerabilities privately to founder@proxyrevlvay.com. See
 
 ## License
 
-[MIT](LICENSE).
+The code in this repository is released under the [MIT licence](LICENSE). The
+Revl AI name and logo, and the website copy under `revl-ai/`, identify this
+project and are not offered for reuse as another project's branding.
 
 Revl AI is an independent project. It is not affiliated with, endorsed by or
 sponsored by Anthropic or OpenAI. Claude is a trademark of Anthropic, PBC.

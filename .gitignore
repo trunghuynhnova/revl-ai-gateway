@@ -1,9 +1,9 @@
 node_modules/
 .wrangler/
 .dev.vars
+.dev.vars.*
+.env
+.env.*
 *.log
-
-# Local working notes and scratch config, not part of the project
-_kit/
-EMAIL-SETUP.md
-wrangler.dev.jsonc
+__pycache__/
+*.pyc

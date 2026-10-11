@@ -27,7 +27,7 @@ provider credentials of its own.
 | Gateway access keys, stored as SHA-256 digests | Caching and rehydration for streamed responses |
 | Exact-match response cache, scoped to tenant and provider key | Cross-provider fallback |
 | Masking of PII and secrets, with rehydration (non-streaming) | Usage dashboard and analytics API |
-| Retries on 429, 5xx and network errors | Per-key budgets and per-key rate limits |
+| Retries on 429, 500, 502, 503, 504 and network errors | Per-key budgets and per-key rate limits |
 | Per-tenant rate limit | SSO and SCIM |
 | Streaming passthrough | Custom masking detectors |
 | One metadata log line per request | |

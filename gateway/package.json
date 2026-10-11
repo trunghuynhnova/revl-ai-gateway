@@ -4,6 +4,11 @@
   "description": "Open-source BYOK gateway core for the OpenAI Chat Completions and Anthropic Messages APIs, on Cloudflare Workers.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trunghuynhnova/revl-ai-gateway.git",
+    "directory": "gateway"
+  },
   "private": true,
   "scripts": {
     "test": "node --test",

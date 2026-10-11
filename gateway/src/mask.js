@@ -1,4 +1,4 @@
-// Pattern-based masking. It will miss things: see "Masking limitations" in the README.
+// Pattern-based masking. It will miss things: see "Masking and its limits" in the README.
 //
 // Every pattern must stay linear, and must not exhaust the regex stack, on
 // hostile input: it runs over request bodies of up to 10 MiB. Two rules keep it

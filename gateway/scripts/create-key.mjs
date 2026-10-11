@@ -5,6 +5,7 @@
 //   node scripts/create-key.mjs --id acme --label "Acme production"
 
 import { createHash, randomBytes } from "node:crypto";
+import { realpathSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { pathToFileURL } from "node:url";
 
@@ -49,7 +50,7 @@ In another shell, add the entry by hand (Cloudflare dashboard, KV, your KEYS nam
 To revoke the key later, store the same value with "disabled": true.`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   try {
     main();
   } catch (error) {

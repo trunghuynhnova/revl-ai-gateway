@@ -39,7 +39,6 @@
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
     }
-    /* PAGE-SPECIFIC STYLES GO BELOW THIS LINE */
     /* The current item in the mobile menu keeps the spacing of its siblings. */
     #mobile-menu a[aria-current="page"] { display: block; border-radius: .5rem; padding: .625rem .75rem; }
 
@@ -603,7 +602,7 @@ client = Anthropic(
                 </thead>
                 <tbody>
                   <tr><td>400</td><th scope="row"><code class="nw">revl_bad_request</code></th><td>An option header has an invalid value (the message names the header), or the body is not a JSON object</td></tr>
-                  <tr><td>400</td><th scope="row"><code class="nw">revl_oauth_not_supported</code></th><td>Anthropic route: the request carries an <code>Authorization</code> header and no <code>x-api-key</code></td></tr>
+                  <tr><td>400</td><th scope="row"><code class="nw">revl_oauth_not_supported</code></th><td>Anthropic route: an <code>Authorization</code> header and no <code>x-api-key</code>, or an <code>x-api-key</code> that starts with <code>sk-ant-oat</code>. OpenAI route: a JWT-shaped bearer token</td></tr>
                   <tr><td>400</td><th scope="row"><code class="nw">revl_mask_stream_unsupported</code></th><td>Masking is on and the body sets <code>"stream": true</code></td></tr>
                   <tr><td>401</td><th scope="row"><code class="nw">revl_unauthorized</code></th><td>Missing, unknown or disabled gateway key</td></tr>
                   <tr><td>401</td><th scope="row"><code class="nw">revl_missing_provider_key</code></th><td>Missing provider key on either route</td></tr>
@@ -639,11 +638,9 @@ npx wrangler kv namespace create CACHE
 <span class="t-c"># 3. Put each id in the matching "kv_namespaces" entry in wrangler.jsonc, then deploy</span>
 npx wrangler deploy
 
-<span class="t-c"># 4. Create a gateway key. Only its SHA-256 digest is stored.</span>
-KEY=<span class="t-s">"rvl_live_$(node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))")"</span>
-HASH=<span class="t-s">"$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$KEY")"</span>
-npx wrangler kv key put <span class="t-s">"key:$HASH"</span> <span class="t-s">'{"id":"my-team","label":"first key","disabled":false}'</span> --binding KEYS --remote
-echo <span class="t-s">"$KEY"</span>   <span class="t-c"># send this as X-Revl-Key. The key itself is never stored, so save it now.</span></code></pre>
+<span class="t-c"># 4. Create a gateway key. The script prints the key once, and the command that stores its SHA-256 digest.</span>
+node scripts/create-key.mjs --id my-team --label <span class="t-s">"first key"</span>
+<span class="t-c"># Run the "npx wrangler kv key put ..." command it prints, then send the key as X-Revl-Key.</span></code></pre>
             </div>
             <p>Check the deployment with <code>GET /healthz</code>, which returns <code>{"ok":true,"version":"0.1.0"}</code>. Then follow the <a href="#quickstart">quickstart</a>.</p>
             <div class="tbl" role="region" aria-label="Self-hosting settings" tabindex="0">
@@ -765,7 +762,6 @@ echo <span class="t-s">"$KEY"</span>   <span class="t-c"># send this as X-Revl-K
       });
     })();
   </script>
-  <!-- PAGE-SPECIFIC SCRIPT GOES BELOW THIS LINE -->
   <script>
     /* Tabs: click, Left/Right, Home/End. Selection follows focus. */
     (function () {

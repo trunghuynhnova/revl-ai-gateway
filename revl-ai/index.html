@@ -178,8 +178,7 @@
     "model": "gpt-4o",
     "messages": [{
       "role": "user",
-      "content": "Draft a reply to
-                  jane.doe@example.com"
+      "content": "Reply to jane.doe@example.com"
     }]
   }'</span></code></pre>
                   </div>
@@ -247,7 +246,7 @@
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>
             </div>
             <h3 class="mt-6 text-xl font-semibold text-white">Smart Context Caching</h3>
-            <p class="mt-3 leading-relaxed text-zinc-400">Cut LLM API costs by up to 60% on repetitive workloads by reusing responses to requests you have already paid for. Every cache hit is an upstream call you do not make.</p>
+            <p class="mt-3 leading-relaxed text-zinc-400">Stop paying twice for the same request. An identical request is answered from cache instead of calling the provider again, so every cache hit is an upstream call you do not make.</p>
             <ul class="mt-6 flex-1 space-y-2 text-sm text-zinc-400">
               <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Per-request TTL from one minute to 24 hours</li>
               <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Isolated per tenant and per provider key</li>
@@ -261,9 +260,9 @@
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
             </div>
             <h3 class="mt-6 text-xl font-semibold text-white">Resilient Routing &amp; Fallback</h3>
-            <p class="mt-3 leading-relaxed text-zinc-400">Automatic retries with backoff when a provider rate-limits you or returns a server error, plus per-tenant rate limits so one client cannot starve the rest.</p>
+            <p class="mt-3 leading-relaxed text-zinc-400">Opt-in retries with backoff when a provider rate-limits you or returns a server error, plus per-tenant rate limits so one client cannot starve the rest.</p>
             <ul class="mt-6 flex-1 space-y-2 text-sm text-zinc-400">
-              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Up to three retries on 429 and 5xx responses</li>
+              <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Up to three retries on 429, 500, 502, 503 and 504</li>
               <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Per-tenant rate limits</li>
               <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Streaming responses passed straight through</li>
             </ul>
@@ -274,8 +273,8 @@
             <div class="grid h-12 w-12 place-items-center rounded-xl bg-pink-500/10 text-pink-300 ring-1 ring-inset ring-pink-500/20">
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
             </div>
-            <h3 class="mt-6 text-xl font-semibold text-white">Zero-Knowledge Data Masking</h3>
-            <p class="mt-3 leading-relaxed text-zinc-400">Mask PII and enterprise secrets in real time before sending upstream. Matches are replaced with placeholders at the gateway and restored in the response, so the provider never sees the raw values.</p>
+            <h3 class="mt-6 text-xl font-semibold text-white">PII &amp; Secret Masking</h3>
+            <p class="mt-3 leading-relaxed text-zinc-400">Mask PII and enterprise secrets in real time before sending upstream. Matches are replaced with placeholders at the gateway and restored in the response, so matched values are not sent to the provider.</p>
             <ul class="mt-6 flex-1 space-y-2 text-sm text-zinc-400">
               <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-pink-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Emails, phone numbers, cards, IPs, API keys and tokens</li>
               <li class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 flex-none text-pink-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>Mapping kept in memory for one request only</li>
@@ -646,7 +645,7 @@ console.log(completion.choices[0].message.content);</code></pre>
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/></svg>
       </span>
       <h2 id="modal-title" class="mt-5 text-2xl font-bold text-white">Get your API keys</h2>
-      <p class="mt-2 text-sm text-zinc-400">Enter your work email to request a sandbox key with 100k free requests. We'll email you access details and onboarding docs.</p>
+      <p class="mt-2 text-sm text-zinc-400">Enter your work email to request access to the invite-only hosted gateway. We will email you if a key becomes available.</p>
       <form id="modal-form" class="mt-6 space-y-3" novalidate>
         <label for="modal-email" class="sr-only">Work email</label>
         <input type="text" name="company_site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
@@ -795,7 +794,7 @@ console.log(completion.choices[0].message.content);</code></pre>
         });
       };
       wire('waitlist-form', 'waitlist-email', 'waitlist-msg', 'waitlist', "You're on the list. We'll be in touch shortly.");
-      wire('modal-form', 'modal-email', 'modal-msg', 'api-keys', "Request received. We'll email you when your sandbox key is ready.");
+      wire('modal-form', 'modal-email', 'modal-msg', 'api-keys', "Request received. We will email you about access.");
     })();
   </script>
 </body>

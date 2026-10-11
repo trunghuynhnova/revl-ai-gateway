@@ -48,7 +48,8 @@ impossible, change this file in the same commit and say so.
 - Missing provider key on either route: `401 revl_missing_provider_key`.
 - Upstream base URLs are read from `env.OPENAI_BASE_URL` and
   `env.ANTHROPIC_BASE_URL` when set (used by tests and by operators with a
-  regional endpoint). Defaults are the two URLs above.
+  regional endpoint). Defaults are `https://api.openai.com/v1` and
+  `https://api.anthropic.com`.
 
 ## 3. Gateway access key
 
